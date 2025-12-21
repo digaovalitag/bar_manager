@@ -62,7 +62,10 @@ function renderizar(lista) {
                 <h1>${(r.nome || 'SEM NOME').toUpperCase()}</h1>
                 <img src="${r.img || ''}" onerror="this.src='https://placehold.co/100'" style="width:100px; height:100px;">
             </div>
+            <p><strong>Categoria:</strong> ${r.cat || '-'}</p>
             <p><strong>Copo:</strong> ${r.copo || '-'}</p>
+            <p><strong>Guarnição:</strong> ${r.guar || '-'}</p>
+            <p><strong>Ingredientes:</strong> ${Array.isArray(r.ings) ? r.ings.join(', ') : (r.ings || '-')}</p>
             <p><strong>Preparo:</strong> ${Array.isArray(r.prep) ? r.prep.join(' | ') : 'Formato de preparo inválido'}</p>
             <div class="no-print" style="margin-top:15px; border-top:1px solid #eee; padding-top:10px; display:flex; gap:10px;">
                 <button onclick="editarReceita('${r.id}')" style="cursor:pointer; padding:5px 10px; background:#f1c40f; border:none; border-radius:4px;">✏️ Editar</button>
@@ -214,6 +217,17 @@ function editarReceita(id) {
     if (editor) editor.style.display = 'block';
 }
 
+function filtrar() {
+    const termo = document.getElementById('busca').value.toLowerCase();
+    const listaFiltrada = dadosLocais.filter(r => {
+        const nome = (r.nome || '').toLowerCase();
+        const cat = (r.cat || '').toLowerCase();
+        const ings = Array.isArray(r.ings) ? r.ings.join(' ').toLowerCase() : (r.ings || '').toLowerCase();
+        return nome.includes(termo) || cat.includes(termo) || ings.includes(termo);
+    });
+    renderizar(listaFiltrada);
+}
+
 // Tornando funções globais para acesso via HTML (necessário devido ao type="module")
 window.importarDados = importarDados;
 window.carregarDados = carregarDados;
@@ -221,3 +235,4 @@ window.mudarAba = carregarDados;
 window.editarReceita = editarReceita;
 window.imprimirFicha = imprimirFicha;
 window.excluirReceita = excluirReceita;
+window.filtrar = filtrar;
