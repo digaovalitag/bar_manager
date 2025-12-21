@@ -245,8 +245,11 @@ async function salvarReceitaCompleta() {
     }
 
     // 2. Salvar no Banco
-    const receita = { nome, copo, cat, guar, prep, img: imgUrl };
-    if (id) receita.id = id;
+    const receita = { id, nome, copo, cat, guar, prep, img: imgUrl };
+    
+    if (!id) {
+        delete receita.id;
+    }
 
     const { error } = await _supabase.from('receitas').upsert(receita);
 
@@ -254,6 +257,7 @@ async function salvarReceitaCompleta() {
         alert("Erro ao salvar: " + error.message);
     } else {
         alert("Salvo com sucesso!");
+        document.getElementById('ed-id').value = "";
         document.getElementById('editor-container').style.display = 'none';
         carregarDados();
     }
