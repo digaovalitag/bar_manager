@@ -1,6 +1,7 @@
 const URL_SB = "https://tbiorgavxhsjqxxykrfq.supabase.co"; 
 const KEY_SB = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiaW9yZ2F2eGhzanF4eHlrcmZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzMjM4NDksImV4cCI6MjA4MTg5OTg0OX0.n-_1lguGMe0F7GxLj1fT5Y3jXllIyS-5Ehs4pm99lXg";
 
+
 // 1. Verificação de Configuração
 if (!URL_SB || !KEY_SB) {
     console.error("❌ ERRO CRÍTICO: URL_SB ou KEY_SB não definidos.");
@@ -129,3 +130,6 @@ async function importarDados(event) {
     };
     reader.readAsText(file);
 }
+
+window.importarDados = importarDados;
+window.mudarAba = carregarDados; // Ou o nome da sua função de alternar abas
