@@ -131,11 +131,7 @@ async function importarDados(event) {
     reader.readAsText(file);
 }
 
-window.importarDados = importarDados;
-window.mudarAba = carregarDados; // Ou o nome da sua função de alternar abas
-
-// Isso permite que o HTML encontre as funções
+// Tornando funções globais para acesso via HTML (necessário devido ao type="module")
 window.importarDados = importarDados;
 window.carregarDados = carregarDados;
-// Se você usa o botão "Fichas Técnicas", adicione:
 window.mudarAba = carregarDados;
