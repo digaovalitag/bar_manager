@@ -1,5 +1,5 @@
-const URL_SB = "https://kfdtfzxmdamugokdjkro.supabase.co";
-const KEY_SB = "sb_publishable_DTdFzGhL1iW33zuCieeoeA_OvvhjAfn";
+const URL_SB = "https://tbiorgavxhsjqxxykrfq.supabase.co"; 
+const KEY_SB = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiaW9yZ2F2eGhzanF4eHlrcmZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzMjM4NDksImV4cCI6MjA4MTg5OTg0OX0.n-_1lguGMe0F7GxLj1fT5Y3jXllIyS-5Ehs4pm99lXg";
 
 // 1. Verificação de Configuração
 if (!URL_SB || !KEY_SB) {
