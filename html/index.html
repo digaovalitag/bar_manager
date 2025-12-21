@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Bar Manager Pro v25</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <nav class="no-print">
+        <h2 style="color: #d4af37;">BAR SYS</h2>
+        <button onclick="mudarAba('receitas')">📝 Fichas Técnicas</button>
+        <button onclick="mudarAba('admin')">⚙️ Gestão Insumos</button>
+        <button onclick="abrirEditor()">➕ Novo Drink</button>
+        <hr>
+        <button onclick="window.print()" style="background: #27ae60; color: white;">🖨️ Imprimir Seleção</button>
+        <button onclick="document.getElementById('fileIn').click()" style="background: #444; color: white;">📂 Somar JSON</button>
+        <input type="file" id="fileIn" style="display:none" onchange="importarDados(event)">
+    </nav>
+
+    <main>
+        <div id="editor-container" class="no-print" style="display:none;">
+            <div class="editor-card">
+                <h3>Edição de Ficha Técnica</h3>
+                <input type="hidden" id="ed-id">
+                <input type="text" id="ed-nome" placeholder="Nome do Drink (ex: Mojito)">
+                <input type="text" id="ed-copo" placeholder="Copo (ex: Highball)">
+                <input type="text" id="ed-cat" placeholder="Categoria (ex: Clássico)">
+                <input type="text" id="ed-guar" placeholder="Guarnição">
+                <textarea id="ed-prep" placeholder="Modo de Preparo (um passo por linha)"></textarea>
+                <div class="foto-upload">
+                    <label>Foto do Drink:</label>
+                    <input type="file" id="ed-foto" accept="image/*">
+                    <input type="hidden" id="ed-img-url">
+                </div>
+                <button onclick="salvarReceitaCompleta()" class="btn-save">GRAVAR NO SUPABASE</button>
+                <button onclick="fecharEditor()">CANCELAR</button>
+            </div>
+        </div>
+
+        <div id="admin-container" class="no-print" style="display:none;">
+            <div class="editor-card">
+                <h3>Gerenciar Categorias</h3>
+                <div style="display:flex; gap: 10px; margin-bottom: 15px;">
+                    <input type="text" id="cat-nova" placeholder="Nova Categoria">
+                    <button onclick="salvarCategoria()" class="btn-save">Adicionar</button>
+                </div>
+                <ul id="lista-categorias" style="list-style: none; padding: 0;"></ul>
+            </div>
+
+            <div class="editor-card" style="margin-top: 20px;">
+                <h3>Gerenciar Insumos</h3>
+                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 10px; margin-bottom: 15px;">
+                    <input type="text" id="ins-nome" placeholder="Nome do Insumo">
+                    <input type="number" id="ins-preco" placeholder="Preço (R$)" step="0.01">
+                    <input type="number" id="ins-vol" placeholder="Qtd">
+                    <select id="ins-un">
+                        <option value="ml">ml</option>
+                        <option value="g">g</option>
+                        <option value="un">un</option>
+                    </select>
+                    <button onclick="salvarInsumo()" class="btn-save">Cadastrar</button>
+                </div>
+                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead><tr style="border-bottom: 1px solid #ccc;"><th>Insumo</th><th>Preço</th><th>Vol</th><th>Custo Unit.</th></tr></thead>
+                    <tbody id="tabela-insumos"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="search-box no-print">
+            <input type="text" id="busca" placeholder="🔍 Buscar por nome, ingrediente ou categoria..." onkeyup="filtrar()">
+        </div>
+
+        <div id="catalogo"></div>
+    </main>
+
+    <script src="./js/script.js"></script>
+</body>
+</html>
