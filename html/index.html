@@ -33,6 +33,11 @@
                     <label>Foto do Drink:</label>
                     <input type="file" id="ed-foto" accept="image/*">
                     <input type="hidden" id="ed-img-url">
+                    <!-- Preview para o Zoom -->
+                    <div class="foto-container" style="float: none; display: block; margin: 10px auto;">
+                        <img id="ed-preview" src="https://placehold.co/150">
+                    </div>
+                    <label>Ajustar Tamanho (Zoom):</label> <input type="range" id="ed-zoom" min="1" max="3" step="0.1" value="1" oninput="ajustarZoom(this.value)">
                 </div>
                 <button onclick="salvarReceitaCompleta()" class="btn-save">FAZER UPLOAD E SALVAR</button>
                 <button onclick="fecharEditor()">CANCELAR</button>

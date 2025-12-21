@@ -58,9 +58,11 @@ function renderizar(lista) {
 
     cont.innerHTML = lista.map(r => `
         <div class="ficha-a4" style="background:white; margin-bottom:20px; padding:20px; border:1px solid #ccc;">
-            <img src="${r.img || ''}" onerror="this.src='https://placehold.co/350x150'">
-            <div style="display:flex; justify-content:space-between; border-bottom:2px solid black;">
+            <div style="display:flex; justify-content:space-between; border-bottom:2px solid black; margin-bottom: 15px;">
                 <h1>${(r.nome || 'SEM NOME').toUpperCase()}</h1>
+            </div>
+            <div class="foto-container">
+                <img src="${r.img || ''}" style="transform: scale(${r.zoom || 1})" onerror="this.src='https://placehold.co/150'">
             </div>
             <p><strong>Categoria:</strong> ${r.cat || '-'}</p>
             <p><strong>Copo:</strong> ${r.copo || '-'}</p>
@@ -207,6 +209,14 @@ function editarReceita(id) {
     setVal('ed-cat', r.cat || '');
     setVal('ed-guar', r.guar || '');
     setVal('ed-img-url', r.img || '');
+    setVal('ed-zoom', r.zoom || 1);
+
+    // Atualizar preview
+    const preview = document.getElementById('ed-preview');
+    if (preview) {
+        preview.src = r.img || 'https://placehold.co/150';
+        preview.style.transform = `scale(${r.zoom || 1})`;
+    }
     
     // Tratar array de preparo para textarea (join com quebra de linha)
     const prepTexto = Array.isArray(r.prep) ? r.prep.join('\n') : r.prep;
@@ -215,6 +225,11 @@ function editarReceita(id) {
     // Mostrar editor
     const editor = document.getElementById('editor-container');
     if (editor) editor.style.display = 'block';
+}
+
+function ajustarZoom(valor) {
+    const img = document.getElementById('ed-preview');
+    if (img) img.style.transform = `scale(${valor})`;
 }
 
 async function salvarReceitaCompleta() {
@@ -226,6 +241,7 @@ async function salvarReceitaCompleta() {
     const prep = document.getElementById('ed-prep').value.split('\n');
     const fileInput = document.getElementById('ed-foto');
     let imgUrl = document.getElementById('ed-img-url').value;
+    const zoom = document.getElementById('ed-zoom').value;
 
     if (!nome) return alert("Nome é obrigatório");
 
@@ -245,7 +261,7 @@ async function salvarReceitaCompleta() {
     }
 
     // 2. Salvar no Banco
-    const receita = { id, nome, copo, cat, guar, prep, img: imgUrl };
+    const receita = { id, nome, copo, cat, guar, prep, img: imgUrl, zoom };
     
     if (!id) {
         delete receita.id;
@@ -283,3 +299,4 @@ window.editarReceita = editarReceita;
 window.imprimirFicha = imprimirFicha;
 window.excluirReceita = excluirReceita;
 window.filtrar = filtrar;
+window.ajustarZoom = ajustarZoom;

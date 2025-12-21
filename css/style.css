@@ -19,6 +19,10 @@ main { margin-left: 250px; padding: 20px; width: calc(100% - 250px); }
 /* Regra para imagem de topo do card */
 .ficha-a4 img { width: 100%; height: 350px; object-fit: cover; border-radius: 8px 8px 0 0; display: block; }
 
+/* Novo layout com foto flutuante e zoom */
+.foto-container { width: 150px; height: 150px; float: right; margin-left: 20px; overflow: hidden; border-radius: 8px; border: 1px solid #ddd; position: relative; }
+.foto-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+
 @media print {
     .no-print { display: none !important; }
     main { margin: 0; width: 100%; }
