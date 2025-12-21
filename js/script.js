@@ -57,22 +57,31 @@ function renderizar(lista) {
     }
 
     cont.innerHTML = lista.map(r => `
-        <div class="ficha-a4" style="background:white; margin-bottom:20px; padding:20px; border:1px solid #ccc;">
-            <div style="display:flex; justify-content:space-between; border-bottom:2px solid black; margin-bottom: 15px;">
+        <div class="ficha-a4">
+            <div class="ficha-info">
                 <h1>${(r.nome || 'SEM NOME').toUpperCase()}</h1>
+                <p><strong>CATEGORIA:</strong> ${r.cat || '-'} | <strong>COPO:</strong> ${r.copo || '-'}</p>
+                <p><strong>GUARNIÇÃO:</strong> ${r.guar || '-'}</p>
+                
+                <h3>INGREDIENTES</h3>
+                <ul>
+                    ${Array.isArray(r.ings) ? r.ings.map(i => `<li>${i}</li>`).join('') : `<li>${r.ings || '-'}</li>`}
+                </ul>
+
+                <h3>MODO DE PREPARO</h3>
+                <div>
+                    ${Array.isArray(r.prep) ? r.prep.map((p, i) => `<p><strong>${i+1}.</strong> ${p}</p>`).join('') : r.prep}
+                </div>
+
+                <div class="no-print" style="margin-top:20px; display:flex; gap:10px;">
+                    <button onclick="editarReceita('${r.id}')" style="cursor:pointer; padding:8px 12px; background:#f1c40f; border:none; border-radius:4px;">✏️ Editar</button>
+                    <button onclick="imprimirFicha('${r.id}')" style="cursor:pointer; padding:8px 12px; background:#3498db; color:white; border:none; border-radius:4px;">🖨️ Imprimir</button>
+                    <button onclick="excluirReceita('${r.id}')" style="cursor:pointer; padding:8px 12px; background:#e74c3c; color:white; border:none; border-radius:4px;">🗑️ Excluir</button>
+                </div>
             </div>
+            
             <div class="foto-container">
-                <img src="${r.img || ''}" style="transform: scale(${r.zoom || 1})" onerror="this.src='https://placehold.co/150'">
-            </div>
-            <p><strong>Categoria:</strong> ${r.cat || '-'}</p>
-            <p><strong>Copo:</strong> ${r.copo || '-'}</p>
-            <p><strong>Guarnição:</strong> ${r.guar || '-'}</p>
-            <p><strong>Ingredientes:</strong> ${Array.isArray(r.ings) ? r.ings.join(', ') : (r.ings || '-')}</p>
-            <p><strong>Preparo:</strong> ${Array.isArray(r.prep) ? r.prep.join(' | ') : 'Formato de preparo inválido'}</p>
-            <div class="no-print" style="margin-top:15px; border-top:1px solid #eee; padding-top:10px; display:flex; gap:10px;">
-                <button onclick="editarReceita('${r.id}')" style="cursor:pointer; padding:5px 10px; background:#f1c40f; border:none; border-radius:4px;">✏️ Editar</button>
-                <button onclick="imprimirFicha('${r.id}')" style="cursor:pointer; padding:5px 10px; background:#3498db; color:white; border:none; border-radius:4px;">🖨️ Imprimir</button>
-                <button onclick="excluirReceita('${r.id}')" style="cursor:pointer; padding:5px 10px; background:#e74c3c; color:white; border:none; border-radius:4px;">🗑️ Excluir</button>
+                <img src="${r.img || ''}" style="transform: scale(${r.zoom || 1})" onerror="this.src='https://placehold.co/250'">
             </div>
         </div>
     `).join('');
