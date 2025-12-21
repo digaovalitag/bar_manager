@@ -64,6 +64,11 @@ function renderizar(lista) {
             </div>
             <p><strong>Copo:</strong> ${r.copo || '-'}</p>
             <p><strong>Preparo:</strong> ${Array.isArray(r.prep) ? r.prep.join(' | ') : 'Formato de preparo inválido'}</p>
+            <div class="no-print" style="margin-top:15px; border-top:1px solid #eee; padding-top:10px; display:flex; gap:10px;">
+                <button onclick="editarReceita('${r.id}')" style="cursor:pointer; padding:5px 10px; background:#f1c40f; border:none; border-radius:4px;">✏️ Editar</button>
+                <button onclick="imprimirFicha('${r.id}')" style="cursor:pointer; padding:5px 10px; background:#3498db; color:white; border:none; border-radius:4px;">🖨️ Imprimir</button>
+                <button onclick="excluirReceita('${r.id}')" style="cursor:pointer; padding:5px 10px; background:#e74c3c; color:white; border:none; border-radius:4px;">🗑️ Excluir</button>
+            </div>
         </div>
     `).join('');
 }
@@ -131,7 +136,88 @@ async function importarDados(event) {
     reader.readAsText(file);
 }
 
+// --- Funções de Ação (Editar, Imprimir, Excluir) ---
+
+async function excluirReceita(id) {
+    if (!confirm("Tem certeza que deseja excluir esta receita?")) return;
+    
+    const { error } = await _supabase.from('receitas').delete().eq('id', id);
+    
+    if (error) {
+        console.error("Erro ao excluir:", error);
+        alert("Erro ao excluir: " + error.message);
+    } else {
+        // Atualiza localmente para evitar novo fetch desnecessário
+        dadosLocais = dadosLocais.filter(r => r.id != id);
+        renderizar(dadosLocais);
+        alert("Receita excluída com sucesso!");
+    }
+}
+
+function imprimirFicha(id) {
+    const r = dadosLocais.find(item => item.id == id);
+    if (!r) return;
+
+    const janela = window.open('', '_blank', 'width=800,height=600');
+    janela.document.write(`
+        <html>
+        <head>
+            <title>Imprimir - ${r.nome}</title>
+            <style>
+                body { font-family: sans-serif; padding: 20px; }
+                .ficha { border: 1px solid #000; padding: 20px; max-width: 210mm; margin: 0 auto; }
+                h1 { border-bottom: 2px solid #000; }
+                img { max-width: 150px; float: right; }
+            </style>
+        </head>
+        <body>
+            <div class="ficha">
+                <img src="${r.img || ''}" onerror="this.style.display='none'">
+                <h1>${(r.nome || '').toUpperCase()}</h1>
+                <p><strong>Copo:</strong> ${r.copo || '-'}</p>
+                <p><strong>Categoria:</strong> ${r.cat || '-'}</p>
+                <p><strong>Guarnição:</strong> ${r.guar || '-'}</p>
+                <h3>Ingredientes</h3>
+                <ul>${(r.ings || []).map(i => `<li>${i}</li>`).join('')}</ul>
+                <h3>Modo de Preparo</h3>
+                <p>${Array.isArray(r.prep) ? r.prep.join('<br>') : r.prep}</p>
+            </div>
+            <script>
+                window.onload = function() { window.print(); window.close(); }
+            <\/script>
+        </body>
+        </html>
+    `);
+    janela.document.close();
+}
+
+function editarReceita(id) {
+    const r = dadosLocais.find(item => item.id == id);
+    if (!r) return;
+
+    // Preencher campos do editor
+    const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; };
+    
+    setVal('ed-id', r.id);
+    setVal('ed-nome', r.nome || '');
+    setVal('ed-copo', r.copo || '');
+    setVal('ed-cat', r.cat || '');
+    setVal('ed-guar', r.guar || '');
+    setVal('ed-img-url', r.img || '');
+    
+    // Tratar array de preparo para textarea (join com quebra de linha)
+    const prepTexto = Array.isArray(r.prep) ? r.prep.join('\n') : r.prep;
+    setVal('ed-prep', prepTexto || '');
+
+    // Mostrar editor
+    const editor = document.getElementById('editor-container');
+    if (editor) editor.style.display = 'block';
+}
+
 // Tornando funções globais para acesso via HTML (necessário devido ao type="module")
 window.importarDados = importarDados;
 window.carregarDados = carregarDados;
 window.mudarAba = carregarDados;
+window.editarReceita = editarReceita;
+window.imprimirFicha = imprimirFicha;
+window.excluirReceita = excluirReceita;
