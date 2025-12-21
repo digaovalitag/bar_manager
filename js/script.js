@@ -133,3 +133,9 @@ async function importarDados(event) {
 
 window.importarDados = importarDados;
 window.mudarAba = carregarDados; // Ou o nome da sua função de alternar abas
+
+// Isso permite que o HTML encontre as funções
+window.importarDados = importarDados;
+window.carregarDados = carregarDados;
+// Se você usa o botão "Fichas Técnicas", adicione:
+window.mudarAba = carregarDados;
