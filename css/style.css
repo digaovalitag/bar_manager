@@ -16,6 +16,9 @@ main { margin-left: 250px; padding: 20px; width: calc(100% - 250px); }
 .foto-box { width: 75mm; height: 75mm; background: #eee; border-radius: 4px; overflow: hidden; }
 .foto-box img { width: 100%; height: 100%; object-fit: cover; }
 
+/* Regra para imagem de topo do card */
+.ficha-a4 img { width: 100%; height: 350px; object-fit: cover; border-radius: 8px 8px 0 0; display: block; }
+
 @media print {
     .no-print { display: none !important; }
     main { margin: 0; width: 100%; }

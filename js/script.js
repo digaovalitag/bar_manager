@@ -58,9 +58,9 @@ function renderizar(lista) {
 
     cont.innerHTML = lista.map(r => `
         <div class="ficha-a4" style="background:white; margin-bottom:20px; padding:20px; border:1px solid #ccc;">
+            <img src="${r.img || ''}" onerror="this.src='https://placehold.co/350x150'">
             <div style="display:flex; justify-content:space-between; border-bottom:2px solid black;">
                 <h1>${(r.nome || 'SEM NOME').toUpperCase()}</h1>
-                <img src="${r.img || ''}" onerror="this.src='https://placehold.co/100'" style="width:100px; height:100px;">
             </div>
             <p><strong>Categoria:</strong> ${r.cat || '-'}</p>
             <p><strong>Copo:</strong> ${r.copo || '-'}</p>
@@ -217,6 +217,48 @@ function editarReceita(id) {
     if (editor) editor.style.display = 'block';
 }
 
+async function salvarReceitaCompleta() {
+    const id = document.getElementById('ed-id').value;
+    const nome = document.getElementById('ed-nome').value;
+    const copo = document.getElementById('ed-copo').value;
+    const cat = document.getElementById('ed-cat').value;
+    const guar = document.getElementById('ed-guar').value;
+    const prep = document.getElementById('ed-prep').value.split('\n');
+    const fileInput = document.getElementById('ed-foto');
+    let imgUrl = document.getElementById('ed-img-url').value;
+
+    if (!nome) return alert("Nome é obrigatório");
+
+    // 1. Lógica de Upload
+    if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        const fileName = Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9.]/g, '');
+        
+        const { error: uploadError } = await _supabase.storage
+            .from('fotos-drinks')
+            .upload(fileName, file);
+
+        if (uploadError) return alert("Erro no upload: " + uploadError.message);
+
+        const { data } = _supabase.storage.from('fotos-drinks').getPublicUrl(fileName);
+        imgUrl = data.publicUrl;
+    }
+
+    // 2. Salvar no Banco
+    const receita = { nome, copo, cat, guar, prep, img: imgUrl };
+    if (id) receita.id = id;
+
+    const { error } = await _supabase.from('receitas').upsert(receita);
+
+    if (error) {
+        alert("Erro ao salvar: " + error.message);
+    } else {
+        alert("Salvo com sucesso!");
+        document.getElementById('editor-container').style.display = 'none';
+        carregarDados();
+    }
+}
+
 function filtrar() {
     const termo = document.getElementById('busca').value.toLowerCase();
     const listaFiltrada = dadosLocais.filter(r => {
@@ -231,6 +273,7 @@ function filtrar() {
 // Tornando funções globais para acesso via HTML (necessário devido ao type="module")
 window.importarDados = importarDados;
 window.carregarDados = carregarDados;
+window.salvarReceitaCompleta = salvarReceitaCompleta;
 window.mudarAba = carregarDados;
 window.editarReceita = editarReceita;
 window.imprimirFicha = imprimirFicha;
