@@ -115,6 +115,7 @@ function renderizar(lista) {
                 <div class="card-actions no-print">
                     <button class="btn-card btn-primary btn-visualizar" onclick="visualizarFicha('${r.id}')">👁️ Visualizar</button>
                     <button class="btn-card btn-primary" onclick="editarReceita('${r.id}')">✏️ Editar</button>
+                    <button class="btn-card btn-primary" onclick="copiarPromptImagem('${r.id}')">🤖 Gerar Prompt</button>
                     <button class="btn-card btn-primary" onclick="imprimirFicha('${r.id}')">🖨️ Imprimir</button>
                     <button class="btn-card btn-secondary" onclick="excluirReceita('${r.id}')">🗑️ Excluir</button>
                 </div>
@@ -459,6 +460,23 @@ function fecharFullscreen() {
     document.body.style.overflow = 'auto';
 }
 
+function copiarPromptImagem(id) {
+    const r = dadosLocais.find(item => String(item.id) === String(id));
+    if (!r) return;
+
+    const nome = r.nome || 'Cocktail';
+    const copo = r.copo || 'glass';
+    const guar = r.guar || 'garnish';
+
+    const prompt = `Professional photography of a cocktail named ${nome}, served in a ${copo}, garnished with ${guar}. High resolution, cinematic lighting, 8k, photorealistic.`;
+
+    navigator.clipboard.writeText(prompt).then(() => {
+        alert("Prompt copiado! Cole no seu gerador de imagens favorito.");
+    }).catch(err => {
+        console.error("Erro ao copiar:", err);
+    });
+}
+
 function filtrar() {
     const termo = document.getElementById('busca').value.toLowerCase();
     const listaFiltrada = dadosLocais.filter(r => {
@@ -540,3 +558,4 @@ window.salvarCategoria = salvarCategoria;
 window.toggleSidebar = toggleSidebar;
 window.visualizarFicha = visualizarFicha;
 window.fecharFullscreen = fecharFullscreen;
+window.copiarPromptImagem = copiarPromptImagem;
