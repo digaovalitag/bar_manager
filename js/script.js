@@ -87,6 +87,21 @@ function renderizar(lista) {
     `).join('');
 }
 
+/**
+ * Sanitização Total: Cria um objeto de receita limpo, garantindo que ele contenha apenas as chaves permitidas pelo banco.
+ * Também realiza o Mapeamento Flexível (ex: 'preparo' para 'prep').
+ * @param {object} data O objeto de receita bruto.
+ * @returns {object} Um novo objeto contendo apenas os campos válidos.
+ */
+function sanitizarReceita(data) {
+    return {
+        nome: data.nome, cat: data.cat, copo: data.copo, guar: data.guar,
+        ings: data.ings || data.ingredientes || data.ingredients || [],
+        prep: data.prep || data.preparo || [], // Mapeamento para 'prep'
+        img: data.img || data.foto, zoom: data.zoom || 1
+    };
+}
+
 async function importarDados(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -102,19 +117,10 @@ async function importarDados(event) {
             const listaReceitas = Array.isArray(json) ? json : (json.receitas || []);
             if (listaReceitas.length > 0) {
                 const receitasFormatadas = listaReceitas.map(r => {
-                    const item = {
-                        nome: r.nome,
-                        cat: r.cat,
-                        copo: r.copo,
-                        guar: r.guar,
-                        ings: r.ings || r.ingredientes || r.ingredients || [],
-                        prep: r.prep || r.preparo || [], // Renomeando para prep
-                        img: r.img || r.foto,
-                        zoom: r.zoom || 1
-                    };
-                    // 3. Tratamento do ID: Importação não deve ter ID
-                    delete item.id;
-                    return item;
+                    const itemSanitizado = sanitizarReceita(r);
+                    // Tratamento de ID: Garante que o ID não seja enviado na importação
+                    delete itemSanitizado.id; 
+                    return itemSanitizado;
                 });
 
                 const { error } = await sbFetch('receitas', () => 
@@ -278,30 +284,30 @@ async function salvarReceitaCompleta() {
         if (original) ings = original.ings || [];
     }
 
-    // Objeto receita padronizado
-    const receita = {
+    // Sanitização Total: Cria um objeto apenas com os campos permitidos
+    const dadosParaSalvar = sanitizarReceita({
         nome,
         cat,
         copo,
         guar,
         ings,
-        prep, // Usando prep
+        prep,
         img: imgUrl,
         zoom
-    };
+    });
     
+    // Tratamento de ID: Adiciona o ID apenas se for uma edição
     if (id) {
-        receita.id = id;
-    } else {
-        delete receita.id;
+        dadosParaSalvar.id = id;
     }
 
-    const { error } = await _supabase.from('receitas').upsert(receita);
+    const { error } = await _supabase.from('receitas').upsert(dadosParaSalvar);
 
     if (error) {
         alert("Erro ao salvar: " + error.message);
     } else {
         alert("Salvo com sucesso!");
+        // Interface: Garante o fechamento do editor e recarregamento dos dados
         fecharEditor();
         carregarDados();
     }
