@@ -2,7 +2,7 @@
 body { font-family: 'Inter', 'Roboto', sans-serif; margin: 0; display: flex; background: var(--bg); color: var(--text); }
 
 nav { 
-    width: 250px; 
+    width: 260px; 
     background: #ffffff; 
     height: 100vh; 
     position: fixed; 
@@ -24,7 +24,7 @@ nav button {
 }
 nav button:hover { background: #F0F7FF; color: var(--primary); transform: translateX(5px); }
 
-main { margin-left: 250px; padding: 20px; width: calc(100% - 250px); box-sizing: border-box; }
+main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); max-width: 1200px; box-sizing: border-box; }
 
 /* Ajuste do Campo de Busca e Lupa */
 .search-box { display: block !important; position: relative; margin: 0 auto 20px auto; max-width: 210mm; width: 100%; }
@@ -111,6 +111,21 @@ main { margin-left: 250px; padding: 20px; width: calc(100% - 250px); box-sizing:
 .btn-primary { background-color: #2489FF; }
 .btn-secondary { background-color: #7f8c8d; }
 
+/* Estilos para Gestão de Insumos (Admin) */
+.admin-row { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; }
+.admin-row input, .admin-row select {
+    margin-bottom: 0; border-radius: 25px; border: 1px solid #E0E4EC; padding: 10px 15px;
+    box-shadow: none; outline: none; transition: border-color 0.3s;
+}
+.admin-row input:focus, .admin-row select:focus { border-color: var(--primary); }
+.admin-row button {
+    margin-top: 0; border-radius: 25px; background-color: var(--primary); color: white;
+    font-weight: bold; padding: 10px 20px; border: none; cursor: pointer; white-space: nowrap;
+}
+.admin-row button:hover { filter: brightness(1.1); }
+.input-grow { flex-grow: 1; }
+.input-small { width: 100px; }
+
 /* Botão Hamburger e Overlay */
 #menu-toggle {
     display: none; position: fixed; top: 15px; left: 15px; z-index: 200;
@@ -159,4 +174,7 @@ main { margin-left: 250px; padding: 20px; width: calc(100% - 250px); box-sizing:
     
     .btn-visualizar { display: inline-flex; }
     .search-box { width: 90%; }
+    
+    .admin-row { flex-wrap: wrap; }
+    .admin-row input, .admin-row select, .admin-row button { width: 100%; }
 }

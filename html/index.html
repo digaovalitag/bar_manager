@@ -52,8 +52,8 @@
         <div id="admin-container" class="no-print" style="display:none;">
             <div class="editor-card">
                 <h3>Gerenciar Categorias</h3>
-                <div style="display:flex; gap: 10px; margin-bottom: 15px;">
-                    <input type="text" id="cat-nova" placeholder="Nova Categoria">
+                <div class="admin-row">
+                    <input type="text" id="cat-nova" placeholder="Nova Categoria" class="input-grow">
                     <button onclick="salvarCategoria()" class="btn-save">Adicionar</button>
                 </div>
                 <ul id="lista-categorias" style="list-style: none; padding: 0;"></ul>
@@ -61,10 +61,10 @@
 
             <div class="editor-card" style="margin-top: 20px;">
                 <h3>Gerenciar Insumos</h3>
-                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 10px; margin-bottom: 15px;">
-                    <input type="text" id="ins-nome" placeholder="Nome do Insumo">
-                    <input type="number" id="ins-preco" placeholder="Preço (R$)" step="0.01">
-                    <input type="number" id="ins-vol" placeholder="Qtd">
+                <div class="admin-row">
+                    <input type="text" id="ins-nome" placeholder="Nome do Insumo" class="input-grow">
+                    <input type="number" id="ins-preco" placeholder="Preço (R$)" step="0.01" class="input-small">
+                    <input type="number" id="ins-vol" placeholder="Qtd" class="input-small">
                     <select id="ins-un">
                         <option value="ml">ml</option>
                         <option value="g">g</option>
