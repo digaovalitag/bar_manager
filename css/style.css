@@ -8,33 +8,32 @@ main { margin-left: 250px; padding: 20px; width: calc(100% - 250px); }
 .search-box input { width: 100%; padding: 15px; border-radius: 8px; border: 2px solid var(--gold); }
 
 /* Ficha Técnica Padrão A4 */
-.ficha-a4 { 
-    background: white; width: 100%; max-width: 210mm; min-height: 297mm; padding: 20px; 
-    margin: 30px auto; border: 1px solid #ddd; page-break-after: always;
-    display: grid; grid-template-columns: 1fr 250px; gap: 20px; align-items: start;
-    border-bottom: 2px solid #000;
+.drink-card { 
+    display: grid; grid-template-columns: 1fr 250px; gap: 20px; padding: 20px; border-bottom: 2px solid #333;
+    background: white; width: 100%; max-width: 210mm; margin: 30px auto;
+    page-break-after: always;
 }
 
 /* Tipografia de Alta Visibilidade */
 .ficha-info h1 { font-size: 24px; margin: 0 0 10px 0; text-transform: uppercase; }
 .ficha-info h3 { font-size: 18px; border-bottom: 2px solid #000; margin-top: 20px; padding-bottom: 5px; }
-.ficha-info ul { font-size: 18px; font-weight: bold; padding-left: 20px; margin: 10px 0; }
+.ficha-info ul { font-size: 18px; font-weight: bold; padding-left: 20px; margin: 10px 0; color: #000; }
 .ficha-info li { margin-bottom: 5px; }
 .ficha-info p { font-size: 16px; margin: 5px 0; }
 
 /* Foto Quadrada Grande */
 .foto-container { 
     width: 250px; height: 250px; 
-    overflow: hidden; border: 1px solid #000; 
-    position: relative; 
-    float: none; margin: 0; /* Reset de estilos anteriores */
+    object-fit: cover; border-radius: 8px;
+    overflow: hidden; border: 1px solid #000;
+    position: relative; margin: 0;
 }
 .foto-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
 
 @media print {
     .no-print { display: none !important; }
     main { margin: 0; width: 100%; }
-    .ficha-a4 { border: none; margin: 0; box-shadow: none; width: 100%; max-width: none; page-break-after: always; }
+    .drink-card { border: none; margin: 0; box-shadow: none; width: 100%; max-width: none; page-break-after: always; border-bottom: 1px solid #000; }
 }
 
 .editor-card { background: #fff; padding: 20px; border: 2px solid var(--gold); border-radius: 8px; }

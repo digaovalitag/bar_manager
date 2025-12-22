@@ -57,7 +57,7 @@ function renderizar(lista) {
     }
 
     cont.innerHTML = lista.map(r => `
-        <div class="ficha-a4">
+        <div class="drink-card">
             <div class="ficha-info">
                 <h1>${(r.nome || 'SEM NOME').toUpperCase()}</h1>
                 <p><strong>CATEGORIA:</strong> ${r.cat || '-'} | <strong>COPO:</strong> ${r.copo || '-'}</p>
@@ -299,13 +299,59 @@ function filtrar() {
     renderizar(listaFiltrada);
 }
 
+// --- Funções de Controle de Interface ---
+
+function mudarAba(aba) {
+    // Esconde todos os containers
+    document.getElementById('catalogo').style.display = 'none';
+    document.getElementById('admin-container').style.display = 'none';
+    document.getElementById('editor-container').style.display = 'none';
+
+    // Mostra o solicitado
+    if (aba === 'receitas') {
+        document.getElementById('catalogo').style.display = 'block';
+        carregarDados(); // Recarrega dados ao voltar para a lista
+    } else if (aba === 'admin') {
+        document.getElementById('admin-container').style.display = 'block';
+    }
+}
+
+function abrirEditor() {
+    document.getElementById('catalogo').style.display = 'none';
+    document.getElementById('admin-container').style.display = 'none';
+    document.getElementById('editor-container').style.display = 'block';
+    
+    // Limpa o formulário para um novo cadastro
+    document.getElementById('ed-id').value = "";
+    document.getElementById('ed-nome').value = "";
+    document.getElementById('ed-copo').value = "";
+    document.getElementById('ed-cat').value = "";
+    document.getElementById('ed-guar').value = "";
+    document.getElementById('ed-prep').value = "";
+    document.getElementById('ed-img-url').value = "";
+    document.getElementById('ed-zoom').value = "1";
+    const preview = document.getElementById('ed-preview');
+    if(preview) preview.src = "https://placehold.co/150";
+}
+
+function fecharEditor() {
+    mudarAba('receitas');
+}
+
+function salvarInsumo() { alert("Funcionalidade de Insumos em desenvolvimento."); }
+function salvarCategoria() { alert("Funcionalidade de Categorias em desenvolvimento."); }
+
 // Tornando funções globais para acesso via HTML (necessário devido ao type="module")
 window.importarDados = importarDados;
 window.carregarDados = carregarDados;
 window.salvarReceitaCompleta = salvarReceitaCompleta;
-window.mudarAba = carregarDados;
+window.mudarAba = mudarAba;
 window.editarReceita = editarReceita;
 window.imprimirFicha = imprimirFicha;
 window.excluirReceita = excluirReceita;
 window.filtrar = filtrar;
 window.ajustarZoom = ajustarZoom;
+window.abrirEditor = abrirEditor;
+window.fecharEditor = fecharEditor;
+window.salvarInsumo = salvarInsumo;
+window.salvarCategoria = salvarCategoria;
