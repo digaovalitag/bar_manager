@@ -19,7 +19,7 @@ let dadosLocais = [];
 
 window.onload = () => {
     console.log(`Bar Manager Pro v${VERSION} carregado.`);
-    carregarDados();
+    mudarAba('receitas');
     setInterval(atualizarRelogio, 1000);
     atualizarRelogio();
 
@@ -467,17 +467,18 @@ function filtrar() {
 }
 
 function mudarAba(aba) {
-    document.getElementById('catalogo').style.display = 'none';
-    document.getElementById('admin-container').style.display = 'none';
+    // Oculta apenas o editor e overlay, alterna entre as abas principais
     document.getElementById('editor-container').style.display = 'none';
     
     const overlay = document.getElementById('modal-overlay');
     if (overlay) overlay.style.display = 'none';
 
     if (aba === 'receitas') {
+        document.getElementById('admin-container').style.display = 'none';
         document.getElementById('catalogo').style.display = 'block';
         carregarDados();
     } else if (aba === 'admin') {
+        document.getElementById('catalogo').style.display = 'none';
         document.getElementById('admin-container').style.display = 'block';
     }
 }

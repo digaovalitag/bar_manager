@@ -1,5 +1,5 @@
 :root { --primary: #2489FF; --dark: #1a1a1a; --bg: #F8F9FB; --card-bg: #ffffff; --text: #333; }
-body { font-family: 'Inter', 'Roboto', sans-serif; margin: 0; display: flex; background: var(--bg); color: var(--text); }
+body { font-family: 'Inter', 'Roboto', sans-serif; margin: 0; background: var(--bg); color: var(--text); }
 
 nav { 
     width: 260px; 
@@ -26,7 +26,7 @@ nav button {
 }
 nav button:hover { background: #F0F7FF; color: var(--primary); transform: translateX(5px); }
 
-main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); max-width: 1200px; box-sizing: border-box; position: relative; z-index: 1; display: block !important; opacity: 1; min-height: 100vh; }
+main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); max-width: 1200px; box-sizing: border-box; position: relative; z-index: 1; display: block !important; opacity: 1 !important; visibility: visible !important; min-height: 100vh; }
 
 /* Ajuste do Campo de Busca e Lupa */
 .search-box { display: block !important; position: relative; margin: 0 auto 20px auto; max-width: 210mm; width: 100%; }
@@ -164,7 +164,7 @@ main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); max-width: 
     nav h2 { text-align: left; margin-bottom: 30px; }
     nav button { width: 100%; flex: none; margin-bottom: 8px; font-size: 15px; background: transparent; justify-content: flex-start; }
     
-    main { margin-left: 0 !important; width: 100% !important; padding: 80px 15px 15px 15px; min-height: 100vh; }
+    main { margin-left: 0 !important; width: 100% !important; padding-top: 80px; }
     
     .drink-card { grid-template-columns: 1fr; gap: 20px; text-align: center; }
     .ficha-info h1 { font-size: 22px; }
