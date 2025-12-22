@@ -1,3 +1,4 @@
+const VERSION = "26.0";
 const URL_SB = "https://tbiorgavxhsjqxxykrfq.supabase.co"; 
 const KEY_SB = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiaW9yZ2F2eGhzanF4eHlrcmZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzMjM4NDksImV4cCI6MjA4MTg5OTg0OX0.n-_1lguGMe0F7GxLj1fT5Y3jXllIyS-5Ehs4pm99lXg";
 
@@ -17,6 +18,7 @@ const _supabase = supabase.createClient(URL_SB, KEY_SB, {
 let dadosLocais = [];
 
 window.onload = () => {
+    console.log(`Bar Manager Pro v${VERSION} carregado.`);
     carregarDados();
     setInterval(atualizarRelogio, 1000);
     atualizarRelogio();
@@ -80,7 +82,7 @@ function atualizarRelogio() {
         const dataHora = new Date().toLocaleString('pt-BR', {
             timeZone: 'America/Sao_Paulo'
         });
-        el.innerHTML = `Versão 25.0<br>${dataHora}`;
+        el.innerHTML = `Versão ${VERSION}<br>${dataHora}`;
     }
 }
 
