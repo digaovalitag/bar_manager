@@ -20,6 +20,27 @@ window.onload = () => {
     carregarDados();
     setInterval(atualizarRelogio, 1000);
     atualizarRelogio();
+
+    // 1. Visualização da Foto no Modal
+    const fileInput = document.getElementById('ed-foto');
+    if (fileInput) {
+        fileInput.onchange = function(evt) {
+            const file = evt.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('ed-preview');
+                    if (preview) {
+                        preview.src = e.target.result;
+                        // 3. Estilo do Preview
+                        preview.style.maxWidth = "100%";
+                        if (preview.parentElement) preview.parentElement.style.overflow = "hidden";
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+    }
 };
 
 // Função auxiliar para Retry (Tentar Novamente) e Logs
@@ -290,6 +311,9 @@ function ajustarZoom(valor) {
 }
 
 async function salvarReceitaCompleta() {
+    // 4. Feedback
+    console.log("💾 Iniciando salvamento da receita...");
+
     const id = document.getElementById('ed-id').value;
     const nomeInput = document.getElementById('ed-nome');
     const nome = nomeInput.value.trim();
@@ -329,20 +353,19 @@ async function salvarReceitaCompleta() {
 
     // Sanitização e Limpeza
     const dadosLimpos = limparObjetoReceita({
-        nome, cat, copo, guar, ings, prep, img, zoom
+        nome, cat, copo, guar, ings, prep, img: imgUrl, zoom
     });
 
     let error = null;
     
     if (id) {
-        // Edição: Adiciona ID explicitamente para o upsert atualizar
-        const dadosComId = { ...dadosLimpos, id: id };
-        const res = await _supabase.from('receitas').upsert(dadosComId);
+        // Edição: Mantém ID para atualizar a receita correta
+        dadosLimpos.id = id;
+        const res = await _supabase.from('receitas').upsert(dadosLimpos);
         error = res.error;
     } else {
-        // Novo: Envia SEM ID (dadosLimpos já não tem ID)
-        // Regra 2: Remoção Total do ID
-        if (dadosLimpos.id) delete dadosLimpos.id;
+        // Novo: Remove ID para evitar erro de null value
+        delete dadosLimpos.id;
         const res = await _supabase.from('receitas').upsert(dadosLimpos);
         error = res.error;
     }
