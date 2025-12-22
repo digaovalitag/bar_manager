@@ -314,6 +314,7 @@ function editarReceita(id) {
     document.getElementById('ed-zoom').value = r.zoom || 1;
 
     // 3. Tratamento de Texto
+    document.getElementById('ed-ings').value = Array.isArray(r.ings) ? r.ings.join('\n') : (r.ings || '');
     document.getElementById('ed-prep').value = Array.isArray(r.prep) ? r.prep.join('\n') : (r.prep || '');
 
     // 4. Preview da Imagem
@@ -351,6 +352,8 @@ async function salvarReceitaCompleta() {
     const copo = document.getElementById('ed-copo').value;
     const cat = document.getElementById('ed-cat').value;
     const guar = document.getElementById('ed-guar').value;
+    const ingsInput = document.getElementById('ed-ings').value;
+    const ings = ingsInput ? ingsInput.split('\n').map(i => i.trim()).filter(i => i !== '') : [];
     const prepInput = document.getElementById('ed-prep').value;
     const prep = prepInput ? prepInput.split('\n').map(p => p.trim()).filter(p => p !== '') : [];
     const fileInput = document.getElementById('ed-foto');
@@ -373,13 +376,6 @@ async function salvarReceitaCompleta() {
         if (uploadError) return alert("Erro no upload: " + uploadError.message);
         const { data } = _supabase.storage.from('fotos-drinks').getPublicUrl(fileName);
         imgUrl = data.publicUrl;
-    }
-
-    // Recuperar ingredientes originais se for edição
-    let ings = [];
-    if (id) {
-        const original = dadosLocais.find(r => r.id == id);
-        if (original) ings = original.ings || [];
     }
 
     // Sanitização e Limpeza
@@ -525,6 +521,7 @@ function abrirEditor() {
     document.getElementById('ed-copo').value = "";
     document.getElementById('ed-cat').value = "";
     document.getElementById('ed-guar').value = "";
+    document.getElementById('ed-ings').value = "";
     document.getElementById('ed-prep').value = "";
     document.getElementById('ed-img-url').value = "";
     document.getElementById('ed-zoom').value = "1";
