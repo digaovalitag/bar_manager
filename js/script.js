@@ -484,7 +484,7 @@ function mudarAba(aba) {
 }
 
 function abrirEditor() {
-    document.getElementById('editor-container').style.setProperty('display', 'block', 'important');
+    document.getElementById('editor-container').style.display = 'block';
     
     let overlay = document.getElementById('modal-overlay');
     if (!overlay) {
@@ -493,7 +493,7 @@ function abrirEditor() {
         overlay.onclick = fecharEditor;
         document.body.appendChild(overlay);
     }
-    overlay.style.setProperty('display', 'block', 'important');
+    overlay.style.display = 'block';
     
     // Reset form
     document.getElementById('ed-id').value = "";
