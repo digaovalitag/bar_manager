@@ -1,4 +1,4 @@
-const VERSION = "26.0";
+const VERSION = "27.0";
 const URL_SB = "https://tbiorgavxhsjqxxykrfq.supabase.co"; 
 const KEY_SB = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiaW9yZ2F2eGhzanF4eHlrcmZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzMjM4NDksImV4cCI6MjA4MTg5OTg0OX0.n-_1lguGMe0F7GxLj1fT5Y3jXllIyS-5Ehs4pm99lXg";
 
@@ -233,33 +233,56 @@ async function excluirReceita(id) {
 }
 
 function imprimirFicha(id) {
-    const r = dadosLocais.find(item => item.id == id);
+    const r = dadosLocais.find(item => String(item.id) === String(id));
     if (!r) return;
-    const janela = window.open('', '_blank', 'width=800,height=600');
+
+    const janela = window.open('', '_blank', 'width=900,height=800');
     janela.document.write(`
-        <html>
+        <!DOCTYPE html>
+        <html lang="pt-br">
         <head>
+            <meta charset="UTF-8">
             <title>Imprimir - ${r.nome}</title>
+            <link rel="stylesheet" href="../css/style.css">
             <style>
-                body { font-family: sans-serif; padding: 20px; }
-                .ficha { border: 1px solid #000; padding: 20px; max-width: 210mm; margin: 0 auto; }
-                h1 { border-bottom: 2px solid #000; }
-                img { max-width: 150px; float: right; }
+                body { background: white; display: block; margin: 0; }
+                #catalogo { margin: 0; padding: 0; box-shadow: none; width: 100%; }
+                .drink-card { border: none !important; box-shadow: none !important; margin: 0; padding: 0; width: 100%; }
+                .no-print { display: none !important; }
             </style>
         </head>
         <body>
-            <div class="ficha">
-                <img src="${r.img || ''}" onerror="this.style.display='none'">
-                <h1>${(r.nome || '').toUpperCase()}</h1>
-                <p><strong>Copo:</strong> ${r.copo || '-'}</p>
-                <p><strong>Categoria:</strong> ${r.cat || '-'}</p>
-                <p><strong>Guarnição:</strong> ${r.guar || '-'}</p>
-                <h3>Ingredientes</h3>
-                <ul>${(r.ings || []).map(i => `<li>${i}</li>`).join('')}</ul>
-                <h3>Modo de Preparo</h3>
-                <p>${Array.isArray(r.prep) ? r.prep.join('<br>') : r.prep}</p>
+            <div id="catalogo">
+                <div class="drink-card">
+                    <div class="ficha-info">
+                        <h1>${(r.nome || 'SEM NOME').toUpperCase()}</h1>
+                        <p><strong>CATEGORIA:</strong> ${r.cat || '-'} | <strong>COPO:</strong> ${r.copo || '-'}</p>
+                        <p><strong>GUARNIÇÃO:</strong> ${r.guar || '-'}</p>
+                        
+                        <h3>INGREDIENTES</h3>
+                        <ul>
+                            ${Array.isArray(r.ings) ? r.ings.map(i => `<li>${i}</li>`).join('') : `<li>${r.ings || '-'}</li>`}
+                        </ul>
+
+                        <h3>MODO DE PREPARO</h3>
+                        <div>
+                            ${Array.isArray(r.prep) ? r.prep.map((p, i) => `<p><strong>${i+1}.</strong> ${p}</p>`).join('') : (r.prep || '-')}
+                        </div>
+                    </div>
+                    
+                    <div class="foto-container">
+                        <img src="${r.img || ''}" style="transform: scale(${r.zoom || 1}); transform-origin: center;" onerror="this.src='https://placehold.co/300'">
+                    </div>
+                </div>
             </div>
-            <script>window.onload = function() { window.print(); window.close(); }<\/script>
+            <script>
+                window.onload = function() { 
+                    setTimeout(() => { 
+                        window.print(); 
+                        window.close(); 
+                    }, 500); 
+                }
+            <\/script>
         </body>
         </html>
     `);
