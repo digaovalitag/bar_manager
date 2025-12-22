@@ -44,6 +44,8 @@ async function carregarDados() {
     if (!error) {
         dadosLocais = data || [];
         renderizar(dadosLocais);
+    } else {
+        console.error("Erro ao carregar dados:", error);
     }
 }
 
@@ -88,18 +90,32 @@ function renderizar(lista) {
 }
 
 /**
- * Sanitização Total: Cria um objeto de receita limpo, garantindo que ele contenha apenas as chaves permitidas pelo banco.
- * Também realiza o Mapeamento Flexível (ex: 'preparo' para 'prep').
- * @param {object} data O objeto de receita bruto.
- * @returns {object} Um novo objeto contendo apenas os campos válidos.
+ * Função Blindada de Limpeza de Dados
+ * Recebe um objeto bruto e retorna APENAS as colunas permitidas.
+ * Remove explicitamente o ID para evitar conflitos de Identity.
  */
-function sanitizarReceita(data) {
-    return {
-        nome: data.nome, cat: data.cat, copo: data.copo, guar: data.guar,
-        ings: data.ings || data.ingredientes || data.ingredients || [],
-        prep: data.prep || data.preparo || [], // Mapeamento para 'prep'
-        img: data.img || data.foto, zoom: data.zoom || 1
+function limparObjetoReceita(item) {
+    // 1. Mapeamento de campos (JSON -> Banco)
+    const prep = item.prep || item.preparo || [];
+    const ings = item.ings || item.ingredientes || item.ingredients || [];
+    const img = item.img || item.foto;
+
+    // 2. Criação do objeto limpo (Whitelist)
+    const dadosLimpos = {
+        nome: item.nome,
+        cat: item.cat,
+        copo: item.copo,
+        guar: item.guar,
+        ings: ings,
+        prep: prep,
+        img: img,
+        zoom: item.zoom || 1
     };
+
+    // 3. Garantia final: Destructuring para remover ID se ele tiver passado de alguma forma
+    // (Embora o objeto acima já não tenha ID, isso segue a instrução rigorosa)
+    const { id, ...final } = dadosLimpos;
+    return final;
 }
 
 async function importarDados(event) {
@@ -113,36 +129,26 @@ async function importarDados(event) {
             const json = JSON.parse(conteudo.trim());
             let relatorio = "";
 
-            // 1. RECEITAS (Aceita array direto ou chave 'receitas')
+            // 1. RECEITAS
             const listaReceitas = Array.isArray(json) ? json : (json.receitas || []);
             if (listaReceitas.length > 0) {
-                const receitasFormatadas = listaReceitas.map(r => {
-                    // Limpeza Radical: Criação de novo objeto APENAS com colunas permitidas
-                    return {
-                        nome: r.nome,
-                        cat: r.cat,
-                        copo: r.copo,
-                        guar: r.guar,
-                        ings: r.ings || r.ingredientes || r.ingredients || [],
-                        prep: r.prep || r.preparo || [], // Mapeamento: preparo -> prep
-                        img: r.img || r.foto,
-                        zoom: r.zoom || 1
-                        // ID EXCLUÍDO: Não incluímos 'id' aqui para o banco gerar automático
-                    };
-                });
+                // Mapeia e limpa cada item
+                const receitasFormatadas = listaReceitas.map(r => limparObjetoReceita(r));
+
+                console.log("📤 Enviando para Supabase (Amostra):", receitasFormatadas[0]);
 
                 const { error } = await sbFetch('receitas', () => 
                     _supabase.from('receitas').upsert(receitasFormatadas, { onConflict: 'nome' })
                 );
                 
                 if (error) {
-                    console.error("❌ Erro na importação de Receitas:", error);
-                    throw new Error(`Erro em Receitas: ${error.message}`);
+                    console.error("❌ Erro DETALHADO na importação de Receitas:", error);
+                    throw new Error(`Erro Supabase: ${error.message} (Code: ${error.code})`);
                 }
                 relatorio += `✅ ${listaReceitas.length} receitas importadas.\n`;
             }
 
-            // 2. INSUMOS
+            // 2. INSUMOS e 3. CATEGORIAS (Mantidos simples)
             if (json.insumos && Array.isArray(json.insumos)) {
                 const { error } = await sbFetch('insumos', () => 
                     _supabase.from('insumos').upsert(json.insumos, { onConflict: 'nome' })
@@ -151,7 +157,6 @@ async function importarDados(event) {
                 relatorio += `✅ ${json.insumos.length} insumos importados.\n`;
             }
 
-            // 3. CATEGORIAS
             if (json.categorias && Array.isArray(json.categorias)) {
                 const { error } = await sbFetch('categorias', () => 
                     _supabase.from('categorias').upsert(json.categorias, { onConflict: 'nome' })
@@ -174,9 +179,7 @@ async function importarDados(event) {
 
 async function excluirReceita(id) {
     if (!confirm("Tem certeza que deseja excluir esta receita?")) return;
-    
     const { error } = await _supabase.from('receitas').delete().eq('id', id);
-    
     if (error) {
         console.error("Erro ao excluir:", error);
         alert("Erro ao excluir: " + error.message);
@@ -190,7 +193,6 @@ async function excluirReceita(id) {
 function imprimirFicha(id) {
     const r = dadosLocais.find(item => item.id == id);
     if (!r) return;
-
     const janela = window.open('', '_blank', 'width=800,height=600');
     janela.document.write(`
         <html>
@@ -215,9 +217,7 @@ function imprimirFicha(id) {
                 <h3>Modo de Preparo</h3>
                 <p>${Array.isArray(r.prep) ? r.prep.join('<br>') : r.prep}</p>
             </div>
-            <script>
-                window.onload = function() { window.print(); window.close(); }
-            <\/script>
+            <script>window.onload = function() { window.print(); window.close(); }<\/script>
         </body>
         </html>
     `);
@@ -244,7 +244,6 @@ function editarReceita(id) {
         preview.style.transform = `scale(${r.zoom || 1})`;
     }
     
-    // Usando prep
     const prepArr = r.prep;
     const prepTexto = Array.isArray(prepArr) ? prepArr.join('\n') : prepArr;
     setVal('ed-prep', prepTexto || '');
@@ -271,16 +270,12 @@ async function salvarReceitaCompleta() {
 
     if (!nome) return alert("Nome é obrigatório");
 
+    // Upload
     if (fileInput.files.length > 0) {
         const file = fileInput.files[0];
         const fileName = Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9.]/g, '');
-        
-        const { error: uploadError } = await _supabase.storage
-            .from('fotos-drinks')
-            .upload(fileName, file);
-
+        const { error: uploadError } = await _supabase.storage.from('fotos-drinks').upload(fileName, file);
         if (uploadError) return alert("Erro no upload: " + uploadError.message);
-
         const { data } = _supabase.storage.from('fotos-drinks').getPublicUrl(fileName);
         imgUrl = data.publicUrl;
     }
@@ -292,30 +287,32 @@ async function salvarReceitaCompleta() {
         if (original) ings = original.ings || [];
     }
 
-    // Sanitização Total: Cria um objeto apenas com os campos permitidos
-    const dadosParaSalvar = sanitizarReceita({
-        nome,
-        cat,
-        copo,
-        guar,
-        ings,
-        prep,
-        img: imgUrl,
-        zoom
+    // Objeto Limpo (Sem ID)
+    const dadosLimpos = limparObjetoReceita({
+        nome, cat, copo, guar, ings, prep, img, zoom
     });
+
+    let error = null;
     
-    // Tratamento de ID: Adiciona o ID apenas se for uma edição
     if (id) {
-        dadosParaSalvar.id = id;
+        // Edição: ID vai na query, não no body (ou no body se for upsert com ID, mas update é mais seguro aqui)
+        // O usuário pediu upsert. Se for upsert com ID, o ID deve estar no objeto.
+        // Mas a regra "Omissão Total de ID em insert" se aplica a novos.
+        // Vamos usar upsert. Se tem ID, adicionamos explicitamente.
+        const dadosComId = { ...dadosLimpos, id: id };
+        const res = await _supabase.from('receitas').upsert(dadosComId);
+        error = res.error;
+    } else {
+        // Novo: Envia SEM ID
+        const res = await _supabase.from('receitas').upsert(dadosLimpos);
+        error = res.error;
     }
 
-    const { error } = await _supabase.from('receitas').upsert(dadosParaSalvar);
-
     if (error) {
+        console.error("Erro ao salvar:", error);
         alert("Erro ao salvar: " + error.message);
     } else {
         alert("Salvo com sucesso!");
-        // Interface: Garante o fechamento do editor e recarregamento dos dados
         fecharEditor();
         carregarDados();
     }
@@ -360,7 +357,7 @@ function abrirEditor() {
     }
     overlay.style.display = 'block';
     
-    // Limpa formulário
+    // Reset form
     document.getElementById('ed-id').value = "";
     document.getElementById('ed-nome').value = "";
     document.getElementById('ed-copo').value = "";
@@ -382,6 +379,7 @@ function fecharEditor() {
 function salvarInsumo() { alert("Funcionalidade de Insumos em desenvolvimento."); }
 function salvarCategoria() { alert("Funcionalidade de Categorias em desenvolvimento."); }
 
+// Exportações Globais
 window.importarDados = importarDados;
 window.carregarDados = carregarDados;
 window.salvarReceitaCompleta = salvarReceitaCompleta;
