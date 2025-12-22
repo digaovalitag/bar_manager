@@ -16,7 +16,11 @@ const _supabase = supabase.createClient(URL_SB, KEY_SB, {
 
 let dadosLocais = [];
 
-window.onload = () => carregarDados();
+window.onload = () => {
+    carregarDados();
+    setInterval(atualizarRelogio, 1000);
+    atualizarRelogio();
+};
 
 // Função auxiliar para Retry (Tentar Novamente) e Logs
 async function sbFetch(tabela, operacao) {
@@ -46,6 +50,16 @@ async function carregarDados() {
         renderizar(dadosLocais);
     } else {
         console.error("Erro ao carregar dados:", error);
+    }
+}
+
+function atualizarRelogio() {
+    const el = document.getElementById('system-info');
+    if (el) {
+        const dataHora = new Date().toLocaleString('pt-BR', {
+            timeZone: 'America/Sao_Paulo'
+        });
+        el.innerHTML = `Versão 25.0<br>${dataHora}`;
     }
 }
 
@@ -134,8 +148,10 @@ async function importarDados(event) {
             if (listaReceitas.length > 0) {
                 // Mapeia e limpa cada item
                 const receitasFormatadas = listaReceitas.map(r => {
-                    // sanitizarReceita retorna objeto SEM id
-                    return limparObjetoReceita(r);
+                    const itemLimpo = limparObjetoReceita(r);
+                    // Regra 2: Remoção Total do ID na importação
+                    if (itemLimpo.id) delete itemLimpo.id;
+                    return itemLimpo;
                 });
 
                 console.log("📤 Enviando para Supabase (Amostra):", receitasFormatadas[0]);
@@ -261,7 +277,8 @@ function ajustarZoom(valor) {
 
 async function salvarReceitaCompleta() {
     const id = document.getElementById('ed-id').value;
-    const nome = document.getElementById('ed-nome').value;
+    const nomeInput = document.getElementById('ed-nome');
+    const nome = nomeInput.value.trim();
     const copo = document.getElementById('ed-copo').value;
     const cat = document.getElementById('ed-cat').value;
     const guar = document.getElementById('ed-guar').value;
@@ -270,8 +287,14 @@ async function salvarReceitaCompleta() {
     const fileInput = document.getElementById('ed-foto');
     let imgUrl = document.getElementById('ed-img-url').value;
     const zoom = parseFloat(document.getElementById('ed-zoom').value) || 1;
-
-    if (!nome) return alert("Nome é obrigatório");
+    
+    // Validação Visual
+    nomeInput.classList.remove('input-error');
+    
+    if (!nome) {
+        nomeInput.classList.add('input-error');
+        return alert("O campo Nome é obrigatório.");
+    }
 
     // Upload
     if (fileInput.files.length > 0) {
@@ -304,6 +327,8 @@ async function salvarReceitaCompleta() {
         error = res.error;
     } else {
         // Novo: Envia SEM ID (dadosLimpos já não tem ID)
+        // Regra 2: Remoção Total do ID
+        if (dadosLimpos.id) delete dadosLimpos.id;
         const res = await _supabase.from('receitas').upsert(dadosLimpos);
         error = res.error;
     }
@@ -359,7 +384,9 @@ function abrirEditor() {
     
     // Reset form
     document.getElementById('ed-id').value = "";
-    document.getElementById('ed-nome').value = "";
+    const nomeInput = document.getElementById('ed-nome');
+    nomeInput.value = "";
+    nomeInput.classList.remove('input-error'); // Remove erro visual anterior
     document.getElementById('ed-copo').value = "";
     document.getElementById('ed-cat').value = "";
     document.getElementById('ed-guar').value = "";
