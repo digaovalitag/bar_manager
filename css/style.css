@@ -182,3 +182,32 @@ main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); max-width: 
     .admin-row { flex-wrap: wrap; }
     .admin-row input, .admin-row select, .admin-row button { width: 100%; }
 }
+
+@media (min-width: 1024px) {
+    main {
+        padding: 60px;
+        margin-left: 260px;
+    }
+
+    #catalogo {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+        gap: 20px;
+        max-width: 100%;
+    }
+
+    .drink-card {
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 20px;
+    }
+
+    .foto-container {
+        width: 100% !important;
+        height: 250px !important;
+    }
+
+    .search-box {
+        max-width: 800px;
+    }
+}
