@@ -1,4 +1,4 @@
-const VERSION = "27.0";
+const VERSION = "28.0";
 const URL_SB = "https://tbiorgavxhsjqxxykrfq.supabase.co"; 
 const KEY_SB = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiaW9yZ2F2eGhzanF4eHlrcmZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzMjM4NDksImV4cCI6MjA4MTg5OTg0OX0.n-_1lguGMe0F7GxLj1fT5Y3jXllIyS-5Ehs4pm99lXg";
 
@@ -108,14 +108,14 @@ function renderizar(lista) {
                 </ul>
 
                 <h3>MODO DE PREPARO</h3>
-                <div>
-                    ${Array.isArray(r.prep) ? r.prep.map((p, i) => `<p><strong>${i+1}.</strong> ${p}</p>`).join('') : (r.prep || '-')}
-                </div>
+                <ul>
+                    ${Array.isArray(r.prep) ? r.prep.map(p => `<li>${p}</li>`).join('') : `<li>${r.prep || '-'}</li>`}
+                </ul>
 
-                <div class="no-print" style="margin-top:20px; display:flex; gap:10px;">
-                    <button onclick="editarReceita('${r.id}')" style="cursor:pointer; padding:8px 12px; background:#f1c40f; border:none; border-radius:4px;">✏️ Editar</button>
-                    <button onclick="imprimirFicha('${r.id}')" style="cursor:pointer; padding:8px 12px; background:#3498db; color:white; border:none; border-radius:4px;">🖨️ Imprimir</button>
-                    <button onclick="excluirReceita('${r.id}')" style="cursor:pointer; padding:8px 12px; background:#e74c3c; color:white; border:none; border-radius:4px;">🗑️ Excluir</button>
+                <div class="card-actions no-print">
+                    <button class="btn-card btn-primary" onclick="editarReceita('${r.id}')">✏️ Editar</button>
+                    <button class="btn-card btn-primary" onclick="imprimirFicha('${r.id}')">🖨️ Imprimir</button>
+                    <button class="btn-card btn-secondary" onclick="excluirReceita('${r.id}')">🗑️ Excluir</button>
                 </div>
             </div>
             
@@ -265,9 +265,9 @@ function imprimirFicha(id) {
                         </ul>
 
                         <h3>MODO DE PREPARO</h3>
-                        <div>
-                            ${Array.isArray(r.prep) ? r.prep.map((p, i) => `<p><strong>${i+1}.</strong> ${p}</p>`).join('') : (r.prep || '-')}
-                        </div>
+                        <ul>
+                            ${Array.isArray(r.prep) ? r.prep.map(p => `<li>${p}</li>`).join('') : `<li>${r.prep || '-'}</li>`}
+                        </ul>
                     </div>
                     
                     <div class="foto-container">

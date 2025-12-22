@@ -14,7 +14,7 @@ nav {
     box-shadow: 4px 0 24px rgba(0,0,0,0.02);
 }
 
-nav h2 { color: var(--dark) !important; margin-bottom: 30px; font-size: 22px; letter-spacing: -1px; }
+nav h2 { color: #2489FF !important; margin-bottom: 30px; font-size: 22px; letter-spacing: -1px; }
 
 nav button { 
     width: 100%; padding: 12px 15px; margin-bottom: 8px; cursor: pointer; border: none; 
@@ -25,8 +25,12 @@ nav button {
 nav button:hover { background: #F0F7FF; color: var(--primary); transform: translateX(5px); }
 
 main { margin-left: 250px; padding: 20px; width: calc(100% - 250px); box-sizing: border-box; }
-.search-box input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #ddd; box-shadow: 0 2px 8px rgba(0,0,0,0.05); outline: none; }
-.search-box input:focus { border-color: var(--primary); }
+
+/* Ajuste do Campo de Busca e Lupa */
+.search-box { display: block !important; position: relative; margin-bottom: 20px; }
+.search-box span { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #2489FF; font-size: 1.2rem !important; z-index: 2; pointer-events: none; }
+.search-box input { width: 100%; padding: 15px 15px 15px 45px; border-radius: 25px; border: 1px solid #E0E4EC; background: white; box-shadow: none; outline: none; transition: box-shadow 0.3s; }
+.search-box input:focus { box-shadow: 0 4px 12px rgba(36, 137, 255, 0.1); border-color: #2489FF; }
 
 /* Ficha Técnica Padrão A4 */
 #catalogo { 
@@ -44,11 +48,11 @@ main { margin-left: 250px; padding: 20px; width: calc(100% - 250px); box-sizing:
 }
 
 /* Tipografia de Alta Visibilidade */
-.ficha-info h1 { font-size: 26px; margin: 0 0 10px 0; text-transform: uppercase; color: var(--primary); font-weight: 800; letter-spacing: -0.5px; }
+.ficha-info h1 { font-size: 24px; margin: 0 0 10px 0; text-transform: uppercase; color: var(--primary); font-weight: 800; letter-spacing: -0.5px; }
 .ficha-info h3 { font-size: 18px; border-bottom: 2px solid #eee; margin-top: 20px; padding-bottom: 5px; color: var(--dark); }
-.ficha-info ul { font-size: 16px; font-weight: 500; padding-left: 20px; margin: 10px 0; color: #444; }
+.ficha-info ul { font-size: 16px; font-weight: 500; padding-left: 20px; margin: 10px 0; color: #444; list-style-type: disc; }
 .ficha-info li { margin-bottom: 8px; }
-.ficha-info p { font-size: 16px; margin: 5px 0; color: #666; }
+.ficha-info p { font-size: 16px; margin: 5px 0; color: #444; }
 
 /* Foto Quadrada Grande */
 .foto-container, .foto-preview-container { 
@@ -99,6 +103,14 @@ main { margin-left: 250px; padding: 20px; width: calc(100% - 250px); box-sizing:
 
 /* Validação Visual */
 .input-error { border: 2px solid #e74c3c !important; background-color: #fff5f5; }
+
+/* Botões nos Cards (Estilo Valitag) */
+.card-actions { margin-top: 20px; display: flex; gap: 10px; }
+.btn-card { padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s ease; color: white; }
+.btn-card:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-primary { background-color: #2489FF; }
+.btn-secondary { background-color: #7f8c8d; }
+
 
 /* Responsividade */
 @media (max-width: 768px) {
