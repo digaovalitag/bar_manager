@@ -6,9 +6,11 @@ nav {
     background: #ffffff; 
     height: 100vh; 
     position: fixed; 
+    top: 0;
+    left: 0;
     padding: 30px 20px; 
     color: var(--text); 
-    z-index: 100; 
+    z-index: 1000; 
     overflow-y: auto; 
     border-right: 1px solid #f0f0f0;
     box-shadow: 4px 0 24px rgba(0,0,0,0.02);
@@ -24,7 +26,7 @@ nav button {
 }
 nav button:hover { background: #F0F7FF; color: var(--primary); transform: translateX(5px); }
 
-main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); max-width: 1200px; box-sizing: border-box; position: relative; z-index: 1; display: block; opacity: 1; }
+main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); max-width: 1200px; box-sizing: border-box; position: relative; z-index: 1; display: block !important; opacity: 1; min-height: 100vh; }
 
 /* Ajuste do Campo de Busca e Lupa */
 .search-box { display: block !important; position: relative; margin: 0 auto 20px auto; max-width: 210mm; width: 100%; }
@@ -162,7 +164,7 @@ main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); max-width: 
     nav h2 { text-align: left; margin-bottom: 30px; }
     nav button { width: 100%; flex: none; margin-bottom: 8px; font-size: 15px; background: transparent; justify-content: flex-start; }
     
-    main { margin-left: 0 !important; width: 100% !important; padding: 80px 15px 15px 15px; }
+    main { margin-left: 0 !important; width: 100% !important; padding: 80px 15px 15px 15px; min-height: 100vh; }
     
     .drink-card { grid-template-columns: 1fr; gap: 20px; text-align: center; }
     .ficha-info h1 { font-size: 22px; }
