@@ -117,10 +117,18 @@ async function importarDados(event) {
             const listaReceitas = Array.isArray(json) ? json : (json.receitas || []);
             if (listaReceitas.length > 0) {
                 const receitasFormatadas = listaReceitas.map(r => {
-                    const itemSanitizado = sanitizarReceita(r);
-                    // Tratamento de ID: Garante que o ID não seja enviado na importação
-                    delete itemSanitizado.id; 
-                    return itemSanitizado;
+                    // Limpeza Radical: Criação de novo objeto APENAS com colunas permitidas
+                    return {
+                        nome: r.nome,
+                        cat: r.cat,
+                        copo: r.copo,
+                        guar: r.guar,
+                        ings: r.ings || r.ingredientes || r.ingredients || [],
+                        prep: r.prep || r.preparo || [], // Mapeamento: preparo -> prep
+                        img: r.img || r.foto,
+                        zoom: r.zoom || 1
+                        // ID EXCLUÍDO: Não incluímos 'id' aqui para o banco gerar automático
+                    };
                 });
 
                 const { error } = await sbFetch('receitas', () => 
