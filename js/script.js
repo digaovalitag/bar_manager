@@ -346,7 +346,7 @@ async function salvarReceitaCompleta() {
     const cat = document.getElementById('ed-cat').value;
     const guar = document.getElementById('ed-guar').value;
     const prepInput = document.getElementById('ed-prep').value;
-    const prep = prepInput ? prepInput.split('\n') : [];
+    const prep = prepInput ? prepInput.split('\n').filter(p => p.trim() !== '') : [];
     const fileInput = document.getElementById('ed-foto');
     let imgUrl = document.getElementById('ed-img-url').value;
     const zoom = parseFloat(document.getElementById('ed-zoom').value) || 1;
