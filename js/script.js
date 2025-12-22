@@ -244,30 +244,44 @@ function imprimirFicha(id) {
 }
 
 function editarReceita(id) {
-    const r = dadosLocais.find(item => item.id == id);
+    // 1. Busca de Dados
+    const r = dadosLocais.find(item => String(item.id) === String(id));
     if (!r) return;
 
-    const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; };
+    // 2. Preenchimento de Campos
+    document.getElementById('ed-id').value = r.id;
     
-    setVal('ed-id', r.id);
-    setVal('ed-nome', r.nome || '');
-    setVal('ed-copo', r.copo || '');
-    setVal('ed-cat', r.cat || '');
-    setVal('ed-guar', r.guar || '');
-    setVal('ed-img-url', r.img || '');
-    setVal('ed-zoom', r.zoom || 1);
+    const nomeInput = document.getElementById('ed-nome');
+    nomeInput.value = r.nome || '';
+    nomeInput.classList.remove('input-error');
 
+    document.getElementById('ed-cat').value = r.cat || '';
+    document.getElementById('ed-copo').value = r.copo || '';
+    document.getElementById('ed-guar').value = r.guar || '';
+    document.getElementById('ed-img-url').value = r.img || '';
+    document.getElementById('ed-zoom').value = r.zoom || 1;
+
+    // 3. Tratamento de Texto
+    document.getElementById('ed-prep').value = Array.isArray(r.prep) ? r.prep.join('\n') : (r.prep || '');
+
+    // 4. Preview da Imagem
     const preview = document.getElementById('ed-preview');
     if (preview) {
-        preview.src = r.img || 'https://placehold.co/150';
+        preview.src = r.img || 'https://placehold.co/300';
         preview.style.transform = `scale(${r.zoom || 1})`;
     }
-    
-    const prepArr = r.prep;
-    const prepTexto = Array.isArray(prepArr) ? prepArr.join('\n') : prepArr;
-    setVal('ed-prep', prepTexto || '');
 
-    abrirEditor();
+    // 5. Exibição (Sem resetar o formulário)
+    document.getElementById('editor-container').style.display = 'block';
+    
+    let overlay = document.getElementById('modal-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'modal-overlay';
+        overlay.onclick = fecharEditor;
+        document.body.appendChild(overlay);
+    }
+    overlay.style.display = 'block';
 }
 
 function ajustarZoom(valor) {
