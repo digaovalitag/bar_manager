@@ -70,7 +70,7 @@ function renderizar(lista) {
 
                 <h3>MODO DE PREPARO</h3>
                 <div>
-                    ${Array.isArray(r.preparo) ? r.preparo.map((p, i) => `<p><strong>${i+1}.</strong> ${p}</p>`).join('') : (r.preparo || '-')}
+                    ${Array.isArray(r.prep) ? r.prep.map((p, i) => `<p><strong>${i+1}.</strong> ${p}</p>`).join('') : (r.prep || '-')}
                 </div>
 
                 <div class="no-print" style="margin-top:20px; display:flex; gap:10px;">
@@ -81,7 +81,7 @@ function renderizar(lista) {
             </div>
             
             <div class="foto-container">
-                <img src="${r.img || ''}" style="transform: scale(${r.zoom || 1})" onerror="this.src='https://placehold.co/300'">
+                <img src="${r.img || ''}" style="transform: scale(${r.zoom || 1}); transform-origin: center;" onerror="this.src='https://placehold.co/300'">
             </div>
         </div>
     `).join('');
@@ -95,24 +95,20 @@ async function importarDados(event) {
     reader.onload = async (e) => {
         try {
             const conteudo = e.target.result;
-            console.log('Iniciando Fetch...');
-            // trim() remove espaços em branco no início/fim que causam erro de parse
             const json = JSON.parse(conteudo.trim());
-            
             let relatorio = "";
 
             // 1. RECEITAS (Aceita array direto ou chave 'receitas')
             const listaReceitas = Array.isArray(json) ? json : (json.receitas || []);
             if (listaReceitas.length > 0) {
                 const receitasFormatadas = listaReceitas.map(r => {
-                    // 1. Limpeza de Dados (Sanitização)
                     const item = {
                         nome: r.nome,
                         cat: r.cat,
                         copo: r.copo,
                         guar: r.guar,
                         ings: r.ings || r.ingredientes || r.ingredients || [],
-                        preparo: r.preparo || r.prep || [],
+                        prep: r.prep || r.preparo || [], // Renomeando para prep
                         img: r.img || r.foto,
                         zoom: r.zoom || 1
                     };
@@ -126,8 +122,8 @@ async function importarDados(event) {
                 );
                 
                 if (error) {
-                    console.error("❌ Erro detalhado na importação de Receitas:", error);
-                    throw new Error(`Erro em Receitas: ${error.message} (Código: ${error.code || 'N/A'})`);
+                    console.error("❌ Erro na importação de Receitas:", error);
+                    throw new Error(`Erro em Receitas: ${error.message}`);
                 }
                 relatorio += `✅ ${listaReceitas.length} receitas importadas.\n`;
             }
@@ -150,7 +146,7 @@ async function importarDados(event) {
                 relatorio += `✅ ${json.categorias.length} categorias importadas.\n`;
             }
 
-            if (!relatorio) throw new Error("Nenhum dado válido (receitas, insumos ou categorias) encontrado no JSON.");
+            if (!relatorio) throw new Error("Nenhum dado válido encontrado.");
 
             alert("Sucesso!\n" + relatorio);
             window.location.reload();
@@ -162,8 +158,6 @@ async function importarDados(event) {
     reader.readAsText(file);
 }
 
-// --- Funções de Ação (Editar, Imprimir, Excluir) ---
-
 async function excluirReceita(id) {
     if (!confirm("Tem certeza que deseja excluir esta receita?")) return;
     
@@ -173,7 +167,6 @@ async function excluirReceita(id) {
         console.error("Erro ao excluir:", error);
         alert("Erro ao excluir: " + error.message);
     } else {
-        // Atualiza localmente para evitar novo fetch desnecessário
         dadosLocais = dadosLocais.filter(r => r.id != id);
         renderizar(dadosLocais);
         alert("Receita excluída com sucesso!");
@@ -221,7 +214,6 @@ function editarReceita(id) {
     const r = dadosLocais.find(item => item.id == id);
     if (!r) return;
 
-    // Preencher campos do editor
     const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; };
     
     setVal('ed-id', r.id);
@@ -232,21 +224,18 @@ function editarReceita(id) {
     setVal('ed-img-url', r.img || '');
     setVal('ed-zoom', r.zoom || 1);
 
-    // Atualizar preview
     const preview = document.getElementById('ed-preview');
     if (preview) {
         preview.src = r.img || 'https://placehold.co/150';
         preview.style.transform = `scale(${r.zoom || 1})`;
     }
     
-    // Tratar array de preparo para textarea (join com quebra de linha)
-    const prepArr = r.preparo;
+    // Usando prep
+    const prepArr = r.prep;
     const prepTexto = Array.isArray(prepArr) ? prepArr.join('\n') : prepArr;
     setVal('ed-prep', prepTexto || '');
 
-    // Mostrar editor
-    const editor = document.getElementById('editor-container');
-    if (editor) editor.style.display = 'block';
+    abrirEditor();
 }
 
 function ajustarZoom(valor) {
@@ -261,14 +250,13 @@ async function salvarReceitaCompleta() {
     const cat = document.getElementById('ed-cat').value;
     const guar = document.getElementById('ed-guar').value;
     const prepInput = document.getElementById('ed-prep').value;
-    const preparo = prepInput ? prepInput.split('\n') : [];
+    const prep = prepInput ? prepInput.split('\n') : [];
     const fileInput = document.getElementById('ed-foto');
     let imgUrl = document.getElementById('ed-img-url').value;
     const zoom = parseFloat(document.getElementById('ed-zoom').value) || 1;
 
     if (!nome) return alert("Nome é obrigatório");
 
-    // 1. Lógica de Upload
     if (fileInput.files.length > 0) {
         const file = fileInput.files[0];
         const fileName = Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9.]/g, '');
@@ -283,37 +271,38 @@ async function salvarReceitaCompleta() {
         imgUrl = data.publicUrl;
     }
 
-    // Recuperar ingredientes originais se for edição (preserva dados existentes)
+    // Recuperar ingredientes originais se for edição
     let ings = [];
     if (id) {
         const original = dadosLocais.find(r => r.id == id);
         if (original) ings = original.ings || [];
     }
 
-    // 2. Salvar no Banco
-    const dadosParaSalvar = {
+    // Objeto receita padronizado
+    const receita = {
         nome,
         cat,
         copo,
         guar,
         ings,
-        preparo,
+        prep, // Usando prep
         img: imgUrl,
         zoom
     };
     
     if (id) {
-        dadosParaSalvar.id = id;
+        receita.id = id;
+    } else {
+        delete receita.id;
     }
 
-    const { error } = await _supabase.from('receitas').upsert(dadosParaSalvar);
+    const { error } = await _supabase.from('receitas').upsert(receita);
 
     if (error) {
         alert("Erro ao salvar: " + error.message);
     } else {
         alert("Salvo com sucesso!");
-        document.getElementById('ed-id').value = "";
-        document.getElementById('editor-container').style.display = 'none';
+        fecharEditor();
         carregarDados();
     }
 }
@@ -329,29 +318,23 @@ function filtrar() {
     renderizar(listaFiltrada);
 }
 
-// --- Funções de Controle de Interface ---
-
 function mudarAba(aba) {
-    // Esconde todos os containers
     document.getElementById('catalogo').style.display = 'none';
     document.getElementById('admin-container').style.display = 'none';
     document.getElementById('editor-container').style.display = 'none';
     
-    // Esconde o overlay se existir
     const overlay = document.getElementById('modal-overlay');
     if (overlay) overlay.style.display = 'none';
 
-    // Mostra o solicitado
     if (aba === 'receitas') {
         document.getElementById('catalogo').style.display = 'block';
-        carregarDados(); // Recarrega dados ao voltar para a lista
+        carregarDados();
     } else if (aba === 'admin') {
         document.getElementById('admin-container').style.display = 'block';
     }
 }
 
 function abrirEditor() {
-    // Mostra o modal e cria o overlay se necessário
     document.getElementById('editor-container').style.display = 'block';
     
     let overlay = document.getElementById('modal-overlay');
@@ -363,7 +346,7 @@ function abrirEditor() {
     }
     overlay.style.display = 'block';
     
-    // Limpa o formulário para um novo cadastro
+    // Limpa formulário
     document.getElementById('ed-id').value = "";
     document.getElementById('ed-nome').value = "";
     document.getElementById('ed-copo').value = "";
@@ -385,7 +368,6 @@ function fecharEditor() {
 function salvarInsumo() { alert("Funcionalidade de Insumos em desenvolvimento."); }
 function salvarCategoria() { alert("Funcionalidade de Categorias em desenvolvimento."); }
 
-// Tornando funções globais para acesso via HTML (necessário devido ao type="module")
 window.importarDados = importarDados;
 window.carregarDados = carregarDados;
 window.salvarReceitaCompleta = salvarReceitaCompleta;
