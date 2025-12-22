@@ -25,29 +25,6 @@
     </nav>
 
     <main>
-        <div id="editor-container" class="no-print">
-            <div class="editor-card">
-                <h3>Edição de Ficha Técnica</h3>
-                <input type="hidden" id="ed-id">
-                <input type="text" id="ed-nome" placeholder="Nome do Drink (ex: Mojito)">
-                <input type="text" id="ed-copo" placeholder="Copo (ex: Highball)">
-                <input type="text" id="ed-cat" placeholder="Categoria (ex: Clássico)">
-                <input type="text" id="ed-guar" placeholder="Guarnição">
-                <textarea id="ed-prep" placeholder="Modo de Preparo (um passo por linha)"></textarea>
-                <div class="foto-upload">
-                    <label>Foto do Drink:</label>
-                    <input type="file" id="ed-foto" accept="image/*">
-                    <input type="hidden" id="ed-img-url">
-                    <!-- Preview para o Zoom -->
-                    <div class="foto-container" style="float: none; display: block; margin: 10px auto;">
-                        <img id="ed-preview" src="https://placehold.co/150">
-                    </div>
-                    <label>Ajustar Tamanho (Zoom):</label> <input type="range" id="ed-zoom" min="1" max="3" step="0.1" value="1" oninput="ajustarZoom(this.value)">
-                </div>
-                <button onclick="salvarReceitaCompleta()" class="btn-save">FAZER UPLOAD E SALVAR</button>
-                <button onclick="fecharEditor()">CANCELAR</button>
-            </div>
-        </div>
 
         <div id="admin-container" class="no-print" style="display:none;">
             <div class="editor-card">
@@ -87,5 +64,28 @@
         <div id="catalogo"></div>
     </main>
 
+    <div id="editor-container" class="no-print">
+        <div class="editor-card">
+            <h3>Edição de Ficha Técnica</h3>
+            <input type="hidden" id="ed-id">
+            <input type="text" id="ed-nome" placeholder="Nome do Drink (ex: Mojito)">
+            <input type="text" id="ed-copo" placeholder="Copo (ex: Highball)">
+            <input type="text" id="ed-cat" placeholder="Categoria (ex: Clássico)">
+            <input type="text" id="ed-guar" placeholder="Guarnição">
+            <textarea id="ed-prep" placeholder="Modo de Preparo (um passo por linha)"></textarea>
+            <div class="foto-upload">
+                <label>Foto do Drink:</label>
+                <input type="file" id="ed-foto" accept="image/*">
+                <input type="hidden" id="ed-img-url">
+                <!-- Preview para o Zoom -->
+                <div class="foto-container" style="float: none; display: block; margin: 10px auto;">
+                    <img id="ed-preview" src="https://placehold.co/150">
+                </div>
+                <label>Ajustar Tamanho (Zoom):</label> <input type="range" id="ed-zoom" min="1" max="3" step="0.1" value="1" oninput="ajustarZoom(this.value)">
+            </div>
+            <button onclick="salvarReceitaCompleta()" class="btn-save">FAZER UPLOAD E SALVAR</button>
+            <button onclick="fecharEditor()">CANCELAR</button>
+        </div>
+    </div>
    
 </html>
