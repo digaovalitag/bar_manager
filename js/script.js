@@ -104,19 +104,29 @@ async function importarDados(event) {
             // 1. RECEITAS (Aceita array direto ou chave 'receitas')
             const listaReceitas = Array.isArray(json) ? json : (json.receitas || []);
             if (listaReceitas.length > 0) {
-                const receitasFormatadas = listaReceitas.map(r => ({
-                    nome: r.nome,
-                    copo: r.copo,
-                    cat: r.cat,
-                    guar: r.guar,
-                    prep: r.prep || r.preparo || [],
-                    ings: r.ings || r.ingredientes || r.ingredients || [],
-                    img: r.img || r.foto
-                }));
+                const receitasFormatadas = listaReceitas.map(r => {
+                    const item = {
+                        nome: r.nome,
+                        cat: r.cat,
+                        copo: r.copo,
+                        ings: r.ings || r.ingredientes || r.ingredients || [],
+                        prep: r.prep || r.preparo || [],
+                        guar: r.guar,
+                        img: r.img || r.foto
+                    };
+                    // Garante a remoção do ID para usar o auto-increment do banco
+                    delete item.id;
+                    return item;
+                });
+
                 const { error } = await sbFetch('receitas', () => 
                     _supabase.from('receitas').upsert(receitasFormatadas, { onConflict: 'nome' })
                 );
-                if (error) throw new Error("Erro em Receitas: " + error.message);
+                
+                if (error) {
+                    console.error("❌ Erro detalhado na importação de Receitas:", error);
+                    throw new Error(`Erro em Receitas: ${error.message} (Código: ${error.code || 'N/A'})`);
+                }
                 relatorio += `✅ ${listaReceitas.length} receitas importadas.\n`;
             }
 
