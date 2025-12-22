@@ -129,11 +129,14 @@ async function importarDados(event) {
             const json = JSON.parse(conteudo.trim());
             let relatorio = "";
 
-            // 1. RECEITAS
+            // 1. RECEITAS (Aceita array direto ou chave 'receitas')
             const listaReceitas = Array.isArray(json) ? json : (json.receitas || []);
             if (listaReceitas.length > 0) {
                 // Mapeia e limpa cada item
-                const receitasFormatadas = listaReceitas.map(r => limparObjetoReceita(r));
+                const receitasFormatadas = listaReceitas.map(r => {
+                    // sanitizarReceita retorna objeto SEM id
+                    return limparObjetoReceita(r);
+                });
 
                 console.log("📤 Enviando para Supabase (Amostra):", receitasFormatadas[0]);
 
@@ -287,7 +290,7 @@ async function salvarReceitaCompleta() {
         if (original) ings = original.ings || [];
     }
 
-    // Objeto Limpo (Sem ID)
+    // Sanitização e Limpeza
     const dadosLimpos = limparObjetoReceita({
         nome, cat, copo, guar, ings, prep, img, zoom
     });
@@ -295,15 +298,12 @@ async function salvarReceitaCompleta() {
     let error = null;
     
     if (id) {
-        // Edição: ID vai na query, não no body (ou no body se for upsert com ID, mas update é mais seguro aqui)
-        // O usuário pediu upsert. Se for upsert com ID, o ID deve estar no objeto.
-        // Mas a regra "Omissão Total de ID em insert" se aplica a novos.
-        // Vamos usar upsert. Se tem ID, adicionamos explicitamente.
+        // Edição: Adiciona ID explicitamente para o upsert atualizar
         const dadosComId = { ...dadosLimpos, id: id };
         const res = await _supabase.from('receitas').upsert(dadosComId);
         error = res.error;
     } else {
-        // Novo: Envia SEM ID
+        // Novo: Envia SEM ID (dadosLimpos já não tem ID)
         const res = await _supabase.from('receitas').upsert(dadosLimpos);
         error = res.error;
     }
