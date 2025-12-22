@@ -250,6 +250,10 @@ function imprimirFicha(id) {
                 #catalogo { margin: 0; padding: 0; box-shadow: none; width: 100%; }
                 .drink-card { border: none !important; box-shadow: none !important; margin: 0; padding: 0; width: 100%; }
                 .no-print { display: none !important; }
+
+                /* Estilização de Impressão */
+                ul { list-style-type: disc; padding-left: 20px; }
+                li { font-size: 14pt; margin-bottom: 5px; }
             </style>
         </head>
         <body>
@@ -262,12 +266,12 @@ function imprimirFicha(id) {
                         
                         <h3>INGREDIENTES</h3>
                         <ul>
-                            ${Array.isArray(r.ings) ? r.ings.map(i => `<li>${i}</li>`).join('') : `<li>${r.ings || '-'}</li>`}
+                            ${(Array.isArray(r.ings) ? r.ings : (r.ings || '').split(',')).map(i => i.trim() ? `<li>${i.trim()}</li>` : '').join('')}
                         </ul>
 
                         <h3>MODO DE PREPARO</h3>
                         <ul>
-                            ${Array.isArray(r.prep) ? r.prep.map(p => `<li>${p}</li>`).join('') : `<li>${r.prep || '-'}</li>`}
+                            ${(Array.isArray(r.prep) ? r.prep : (r.prep || '').split(/[\n.]/)).map(p => p.trim() ? `<li>${p.trim()}</li>` : '').join('')}
                         </ul>
                     </div>
                     
