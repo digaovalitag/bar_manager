@@ -81,7 +81,7 @@ function renderizar(lista) {
             </div>
             
             <div class="foto-container">
-                <img src="${r.img || ''}" style="transform: scale(${r.zoom || 1})" onerror="this.src='https://placehold.co/250'">
+                <img src="${r.img || ''}" style="transform: scale(${r.zoom || 1})" onerror="this.src='https://placehold.co/300'">
             </div>
         </div>
     `).join('');
@@ -331,7 +331,7 @@ function abrirEditor() {
     document.getElementById('ed-img-url').value = "";
     document.getElementById('ed-zoom').value = "1";
     const preview = document.getElementById('ed-preview');
-    if(preview) preview.src = "https://placehold.co/150";
+    if(preview) preview.src = "https://placehold.co/300";
 }
 
 function fecharEditor() {
