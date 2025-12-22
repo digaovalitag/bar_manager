@@ -111,13 +111,43 @@ main { margin-left: 250px; padding: 20px; width: calc(100% - 250px); box-sizing:
 .btn-primary { background-color: #2489FF; }
 .btn-secondary { background-color: #7f8c8d; }
 
+/* Botão Hamburger e Overlay */
+#menu-toggle {
+    display: none; position: fixed; top: 15px; left: 15px; z-index: 200;
+    background: #2489FF; color: white; border: none; border-radius: 8px;
+    padding: 10px 15px; font-size: 24px; cursor: pointer;
+    box-shadow: 0 4px 10px rgba(36, 137, 255, 0.3);
+}
+
+#sidebar-overlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); z-index: 99;
+}
+
+/* Modal Tela Cheia (Mobile) */
+#fullscreen-modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: white; z-index: 2000; overflow-y: auto; padding: 20px;
+    box-sizing: border-box;
+}
+
+.btn-visualizar { display: none; background-color: #2489FF; }
 
 /* Responsividade */
 @media (max-width: 768px) {
-    nav { width: 100%; height: auto; position: relative; padding: 15px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; border-right: none; border-bottom: 1px solid #eee; }
-    nav h2 { width: 100%; text-align: center; margin-bottom: 10px; }
-    nav button { width: auto; flex: 1 1 45%; margin: 0; font-size: 13px; background: #f8f9fa; justify-content: center; }
-    main { margin-left: 0; width: 100%; padding: 15px; }
+    #menu-toggle { display: block; }
+    
+    nav { 
+        width: 260px; height: 100vh; position: fixed; top: 0; left: -100%; 
+        display: block; transition: left 0.3s ease; 
+        border-right: 1px solid #eee; box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+    }
+    nav.sidebar-active { left: 0; }
+    
+    nav h2 { text-align: left; margin-bottom: 30px; }
+    nav button { width: 100%; flex: none; margin-bottom: 8px; font-size: 15px; background: transparent; justify-content: flex-start; }
+    
+    main { margin-left: 0; width: 100%; padding: 80px 15px 15px 15px; }
     
     .drink-card { grid-template-columns: 1fr; gap: 20px; text-align: center; }
     .ficha-info h1 { font-size: 22px; }
@@ -126,4 +156,6 @@ main { margin-left: 250px; padding: 20px; width: calc(100% - 250px); box-sizing:
     .foto-container { margin: 0 auto; width: 100% !important; max-width: 300px; height: 300px !important; }
     
     #editor-container { width: 95%; padding: 20px; }
+    
+    .btn-visualizar { display: inline-flex; }
 }

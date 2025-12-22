@@ -113,6 +113,7 @@ function renderizar(lista) {
                 </ul>
 
                 <div class="card-actions no-print">
+                    <button class="btn-card btn-primary btn-visualizar" onclick="visualizarFicha('${r.id}')">👁️ Visualizar</button>
                     <button class="btn-card btn-primary" onclick="editarReceita('${r.id}')">✏️ Editar</button>
                     <button class="btn-card btn-primary" onclick="imprimirFicha('${r.id}')">🖨️ Imprimir</button>
                     <button class="btn-card btn-secondary" onclick="excluirReceita('${r.id}')">🗑️ Excluir</button>
@@ -405,6 +406,55 @@ async function salvarReceitaCompleta() {
     }
 }
 
+function toggleSidebar() {
+    const nav = document.querySelector('nav');
+    const overlay = document.getElementById('sidebar-overlay');
+    nav.classList.toggle('sidebar-active');
+    
+    if (nav.classList.contains('sidebar-active')) {
+        overlay.style.display = 'block';
+    } else {
+        overlay.style.display = 'none';
+    }
+}
+
+function visualizarFicha(id) {
+    const r = dadosLocais.find(item => String(item.id) === String(id));
+    if (!r) return;
+
+    const modal = document.getElementById('fullscreen-modal');
+    modal.innerHTML = `
+        <div style="max-width: 600px; margin: 0 auto; padding-bottom: 50px;">
+            <button onclick="fecharFullscreen()" style="position: fixed; top: 20px; right: 20px; background: #e74c3c; color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 2001;">✕</button>
+            
+            <h1 style="color: #2489FF; font-size: 28px; margin-top: 40px; text-transform: uppercase; text-align: center;">${r.nome}</h1>
+            
+            <div style="width: 100%; height: 300px; border-radius: 16px; overflow: hidden; margin: 20px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <img src="${r.img || 'https://placehold.co/300'}" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            
+            <p style="text-align: center; font-size: 1.1rem; color: #666;"><strong>${r.cat || '-'}</strong> | ${r.copo || '-'}</p>
+
+            <h3 style="font-size: 22px; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 30px; color: #333;">INGREDIENTES</h3>
+            <ul style="font-size: 1.2rem; list-style-type: disc; padding-left: 25px; line-height: 1.6; color: #444;">
+                ${Array.isArray(r.ings) ? r.ings.map(i => `<li>${i}</li>`).join('') : `<li>${r.ings || '-'}</li>`}
+            </ul>
+
+            <h3 style="font-size: 22px; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 30px; color: #333;">MODO DE PREPARO</h3>
+            <ul style="font-size: 1.2rem; list-style-type: disc; padding-left: 25px; line-height: 1.6; color: #444;">
+                ${Array.isArray(r.prep) ? r.prep.map(p => `<li>${p}</li>`).join('') : `<li>${r.prep || '-'}</li>`}
+            </ul>
+        </div>
+    `;
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+function fecharFullscreen() {
+    document.getElementById('fullscreen-modal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
 function filtrar() {
     const termo = document.getElementById('busca').value.toLowerCase();
     const listaFiltrada = dadosLocais.filter(r => {
@@ -482,3 +532,6 @@ window.abrirEditor = abrirEditor;
 window.fecharEditor = fecharEditor;
 window.salvarInsumo = salvarInsumo;
 window.salvarCategoria = salvarCategoria;
+window.toggleSidebar = toggleSidebar;
+window.visualizarFicha = visualizarFicha;
+window.fecharFullscreen = fecharFullscreen;
