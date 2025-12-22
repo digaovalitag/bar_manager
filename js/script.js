@@ -112,7 +112,8 @@ async function importarDados(event) {
                         ings: r.ings || r.ingredientes || r.ingredients || [],
                         prep: r.prep || r.preparo || [],
                         guar: r.guar,
-                        img: r.img || r.foto
+                        img: r.img || r.foto,
+                        zoom: r.zoom || 1
                     };
                     // Garante a remoção do ID para usar o auto-increment do banco
                     delete item.id;
@@ -260,7 +261,7 @@ async function salvarReceitaCompleta() {
     const prep = document.getElementById('ed-prep').value.split('\n');
     const fileInput = document.getElementById('ed-foto');
     let imgUrl = document.getElementById('ed-img-url').value;
-    const zoom = document.getElementById('ed-zoom').value;
+    const zoom = parseFloat(document.getElementById('ed-zoom').value) || 1;
 
     if (!nome) return alert("Nome é obrigatório");
 
@@ -316,6 +317,10 @@ function mudarAba(aba) {
     document.getElementById('catalogo').style.display = 'none';
     document.getElementById('admin-container').style.display = 'none';
     document.getElementById('editor-container').style.display = 'none';
+    
+    // Esconde o overlay se existir
+    const overlay = document.getElementById('modal-overlay');
+    if (overlay) overlay.style.display = 'none';
 
     // Mostra o solicitado
     if (aba === 'receitas') {
@@ -327,9 +332,16 @@ function mudarAba(aba) {
 }
 
 function abrirEditor() {
-    document.getElementById('catalogo').style.display = 'none';
-    document.getElementById('admin-container').style.display = 'none';
+    // Mostra o modal e cria o overlay se necessário
     document.getElementById('editor-container').style.display = 'block';
+    
+    let overlay = document.getElementById('modal-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'modal-overlay';
+        document.body.appendChild(overlay);
+    }
+    overlay.style.display = 'block';
     
     // Limpa o formulário para um novo cadastro
     document.getElementById('ed-id').value = "";
