@@ -27,7 +27,7 @@ nav button:hover { background: #F0F7FF; color: var(--primary); transform: transl
 main { margin-left: 250px; padding: 20px; width: calc(100% - 250px); box-sizing: border-box; }
 
 /* Ajuste do Campo de Busca e Lupa */
-.search-box { display: block !important; position: relative; margin-bottom: 20px; }
+.search-box { display: block !important; position: relative; margin: 0 auto 20px auto; max-width: 210mm; width: 100%; }
 .search-box span { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #2489FF; font-size: 1.2rem !important; z-index: 2; pointer-events: none; }
 .search-box input { width: 100%; padding: 15px 15px 15px 45px; border-radius: 25px; border: 1px solid #E0E4EC; background: white; box-shadow: none; outline: none; transition: box-shadow 0.3s; }
 .search-box input:focus { box-shadow: 0 4px 12px rgba(36, 137, 255, 0.1); border-color: #2489FF; }
@@ -158,4 +158,5 @@ main { margin-left: 250px; padding: 20px; width: calc(100% - 250px); box-sizing:
     #editor-container { width: 95%; padding: 20px; }
     
     .btn-visualizar { display: inline-flex; }
+    .search-box { width: 90%; }
 }
