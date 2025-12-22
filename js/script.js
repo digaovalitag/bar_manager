@@ -104,12 +104,12 @@ function renderizar(lista) {
                 
                 <h3>INGREDIENTES</h3>
                 <ul>
-                    ${Array.isArray(r.ings) ? r.ings.map(i => `<li>${i}</li>`).join('') : `<li>${r.ings || '-'}</li>`}
+                    ${(Array.isArray(r.ings) ? r.ings : (r.ings || '').split(',')).map(i => i.trim() ? `<li>${i.trim()}</li>` : '').join('')}
                 </ul>
 
                 <h3>MODO DE PREPARO</h3>
                 <ul>
-                    ${Array.isArray(r.prep) ? r.prep.map(p => `<li>${p}</li>`).join('') : `<li>${r.prep || '-'}</li>`}
+                    ${(Array.isArray(r.prep) ? r.prep : (r.prep || '').split(/[\n.]/)).map(p => p.trim() ? `<li>${p.trim()}</li>` : '').join('')}
                 </ul>
 
                 <div class="card-actions no-print">
@@ -347,7 +347,7 @@ async function salvarReceitaCompleta() {
     const cat = document.getElementById('ed-cat').value;
     const guar = document.getElementById('ed-guar').value;
     const prepInput = document.getElementById('ed-prep').value;
-    const prep = prepInput ? prepInput.split('\n').filter(p => p.trim() !== '') : [];
+    const prep = prepInput ? prepInput.split('\n').map(p => p.trim()).filter(p => p !== '') : [];
     const fileInput = document.getElementById('ed-foto');
     let imgUrl = document.getElementById('ed-img-url').value;
     const zoom = parseFloat(document.getElementById('ed-zoom').value) || 1;
@@ -437,12 +437,12 @@ function visualizarFicha(id) {
 
             <h3 style="font-size: 22px; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 30px; color: #333;">INGREDIENTES</h3>
             <ul style="font-size: 1.2rem; list-style-type: disc; padding-left: 25px; line-height: 1.6; color: #444;">
-                ${Array.isArray(r.ings) ? r.ings.map(i => `<li>${i}</li>`).join('') : `<li>${r.ings || '-'}</li>`}
+                ${(Array.isArray(r.ings) ? r.ings : (r.ings || '').split(',')).map(i => i.trim() ? `<li>${i.trim()}</li>` : '').join('')}
             </ul>
 
             <h3 style="font-size: 22px; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 30px; color: #333;">MODO DE PREPARO</h3>
             <ul style="font-size: 1.2rem; list-style-type: disc; padding-left: 25px; line-height: 1.6; color: #444;">
-                ${Array.isArray(r.prep) ? r.prep.map(p => `<li>${p}</li>`).join('') : `<li>${r.prep || '-'}</li>`}
+                ${(Array.isArray(r.prep) ? r.prep : (r.prep || '').split(/[\n.]/)).map(p => p.trim() ? `<li>${p.trim()}</li>` : '').join('')}
             </ul>
         </div>
     `;

@@ -50,8 +50,8 @@ main { margin-left: 250px; padding: 20px; width: calc(100% - 250px); box-sizing:
 /* Tipografia de Alta Visibilidade */
 .ficha-info h1 { font-size: 24px; margin: 0 0 10px 0; text-transform: uppercase; color: var(--primary); font-weight: 800; letter-spacing: -0.5px; }
 .ficha-info h3 { font-size: 18px; border-bottom: 2px solid #eee; margin-top: 20px; padding-bottom: 5px; color: var(--dark); }
-.ficha-info ul { font-size: 18px; font-weight: 500; padding-left: 20px; margin: 10px 0; color: #444; list-style-type: disc; }
-.ficha-info li { margin-bottom: 8px; }
+.ficha-info ul { list-style-type: disc; padding-left: 20px; margin: 10px 0; }
+.ficha-info li { margin-bottom: 8px; font-size: 1.1rem; line-height: 1.4; color: #333; }
 .ficha-info p { font-size: 16px; margin: 5px 0; color: #444; }
 
 /* Foto Quadrada Grande */
