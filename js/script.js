@@ -70,7 +70,7 @@ function renderizar(lista) {
 
                 <h3>MODO DE PREPARO</h3>
                 <div>
-                    ${Array.isArray(r.prep) ? r.prep.map((p, i) => `<p><strong>${i+1}.</strong> ${p}</p>`).join('') : r.prep}
+                    ${Array.isArray(r.preparo) ? r.preparo.map((p, i) => `<p><strong>${i+1}.</strong> ${p}</p>`).join('') : (r.preparo || '-')}
                 </div>
 
                 <div class="no-print" style="margin-top:20px; display:flex; gap:10px;">
@@ -105,17 +105,18 @@ async function importarDados(event) {
             const listaReceitas = Array.isArray(json) ? json : (json.receitas || []);
             if (listaReceitas.length > 0) {
                 const receitasFormatadas = listaReceitas.map(r => {
+                    // 1. Limpeza de Dados (Sanitização)
                     const item = {
                         nome: r.nome,
                         cat: r.cat,
                         copo: r.copo,
-                        ings: r.ings || r.ingredientes || r.ingredients || [],
-                        prep: r.prep || r.preparo || [],
                         guar: r.guar,
+                        ings: r.ings || r.ingredientes || r.ingredients || [],
+                        preparo: r.preparo || r.prep || [],
                         img: r.img || r.foto,
                         zoom: r.zoom || 1
                     };
-                    // Garante a remoção do ID para usar o auto-increment do banco
+                    // 3. Tratamento do ID: Importação não deve ter ID
                     delete item.id;
                     return item;
                 });
@@ -239,7 +240,8 @@ function editarReceita(id) {
     }
     
     // Tratar array de preparo para textarea (join com quebra de linha)
-    const prepTexto = Array.isArray(r.prep) ? r.prep.join('\n') : r.prep;
+    const prepArr = r.preparo;
+    const prepTexto = Array.isArray(prepArr) ? prepArr.join('\n') : prepArr;
     setVal('ed-prep', prepTexto || '');
 
     // Mostrar editor
@@ -258,7 +260,8 @@ async function salvarReceitaCompleta() {
     const copo = document.getElementById('ed-copo').value;
     const cat = document.getElementById('ed-cat').value;
     const guar = document.getElementById('ed-guar').value;
-    const prep = document.getElementById('ed-prep').value.split('\n');
+    const prepInput = document.getElementById('ed-prep').value;
+    const preparo = prepInput ? prepInput.split('\n') : [];
     const fileInput = document.getElementById('ed-foto');
     let imgUrl = document.getElementById('ed-img-url').value;
     const zoom = parseFloat(document.getElementById('ed-zoom').value) || 1;
@@ -280,14 +283,30 @@ async function salvarReceitaCompleta() {
         imgUrl = data.publicUrl;
     }
 
-    // 2. Salvar no Banco
-    const receita = { id, nome, copo, cat, guar, prep, img: imgUrl, zoom };
-    
-    if (!id) {
-        delete receita.id;
+    // Recuperar ingredientes originais se for edição (preserva dados existentes)
+    let ings = [];
+    if (id) {
+        const original = dadosLocais.find(r => r.id == id);
+        if (original) ings = original.ings || [];
     }
 
-    const { error } = await _supabase.from('receitas').upsert(receita);
+    // 2. Salvar no Banco
+    const dadosParaSalvar = {
+        nome,
+        cat,
+        copo,
+        guar,
+        ings,
+        preparo,
+        img: imgUrl,
+        zoom
+    };
+    
+    if (id) {
+        dadosParaSalvar.id = id;
+    }
+
+    const { error } = await _supabase.from('receitas').upsert(dadosParaSalvar);
 
     if (error) {
         alert("Erro ao salvar: " + error.message);
@@ -339,6 +358,7 @@ function abrirEditor() {
     if (!overlay) {
         overlay = document.createElement('div');
         overlay.id = 'modal-overlay';
+        overlay.onclick = fecharEditor;
         document.body.appendChild(overlay);
     }
     overlay.style.display = 'block';
@@ -357,7 +377,9 @@ function abrirEditor() {
 }
 
 function fecharEditor() {
-    mudarAba('receitas');
+    document.getElementById('editor-container').style.display = 'none';
+    const overlay = document.getElementById('modal-overlay');
+    if (overlay) overlay.style.display = 'none';
 }
 
 function salvarInsumo() { alert("Funcionalidade de Insumos em desenvolvimento."); }
