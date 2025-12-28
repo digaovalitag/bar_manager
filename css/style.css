@@ -90,7 +90,7 @@ main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); max-width: 
     #catalogo { box-shadow: none; margin: 0; padding: 0; width: 100%; max-width: none; }
     .drink-card { page-break-after: always; break-after: page; border: none !important; box-shadow: none; margin-bottom: 0; padding: 10mm; }
     body { background: white; }
-    .foto-container { border: 1px solid #000; box-shadow: none; }
+    .foto-container { border: 1px solid #000; box-shadow: none; display: block !important; visibility: visible !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
 
 .editor-card { background: #fff; padding: 0; border: none; border-radius: 0; }
