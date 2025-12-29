@@ -1,4 +1,4 @@
-const VERSION = "31.0";
+const VERSION = '32.0';
 const URL_SB = "https://tbiorgavxhsjqxxykrfq.supabase.co"; 
 const KEY_SB = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiaW9yZ2F2eGhzanF4eHlrcmZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzMjM4NDksImV4cCI6MjA4MTg5OTg0OX0.n-_1lguGMe0F7GxLj1fT5Y3jXllIyS-5Ehs4pm99lXg";
 
@@ -238,56 +238,45 @@ function imprimirFicha(id) {
     const r = dadosLocais.find(item => String(item.id) === String(id));
     if (!r) return;
 
-    const janela = window.open('', '_blank', 'width=900,height=800');
+    const janela = window.open('', '_blank');
     janela.document.write(`
-        <!DOCTYPE html>
-        <html lang="pt-br">
+        <html>
         <head>
-            <meta charset="UTF-8">
-            <title>Imprimir - ${r.nome}</title>
-            <link rel="stylesheet" href="../css/style.css">
             <style>
-                body { background: white; display: block; margin: 0; }
-                #catalogo { margin: 0; padding: 0; box-shadow: none; width: 100%; }
-                .drink-card { border: none !important; box-shadow: none !important; margin: 0; padding: 0; width: 100%; }
-                .no-print { display: none !important; }
-
-                /* Estilização de Impressão */
-                ul { list-style-type: disc; padding-left: 20px; }
-                li { font-size: 14pt; margin-bottom: 5px; }
+                @page { size: A4; margin: 1.5cm; }
+                body { font-family: sans-serif; margin: 0; padding: 0; color: #000; }
+                .print-container { width: 100%; position: relative; }
+                .foto-print { 
+                    width: 220px !important; 
+                    height: 220px !important; 
+                    float: right; 
+                    margin: 0 0 15px 15px; 
+                    border-radius: 10px; 
+                    overflow: hidden; 
+                    border: 1px solid #ddd;
+                }
+                .foto-print img { width: 100%; height: 100%; object-fit: cover; transform: scale(${r.zoom || 1}); }
+                h1 { font-size: 26pt; color: #2489FF; margin: 0 0 10px 0; text-transform: uppercase; }
+                h3 { font-size: 16pt; border-bottom: 2px solid #2489FF; margin: 15px 0 8px 0; padding-bottom: 3px; }
+                ul { list-style-type: disc; padding-left: 20px; margin: 5px 0; }
+                li { font-size: 14pt; margin-bottom: 3px; line-height: 1.2; }
+                p { font-size: 12pt; margin: 3px 0; }
+                * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             </style>
         </head>
         <body>
-            <div id="catalogo">
-                <div class="drink-card">
-                    <div class="ficha-info">
-                        <h1>${(r.nome || 'SEM NOME').toUpperCase()}</h1>
-                        <p><strong>CATEGORIA:</strong> ${r.cat || '-'} | <strong>COPO:</strong> ${r.copo || '-'}</p>
-                        <p><strong>GUARNIÇÃO:</strong> ${r.guar || '-'}</p>
-                        
-                        <h3>INGREDIENTES</h3>
-                        <ul>
-                            ${(Array.isArray(r.ings) ? r.ings : (r.ings || '').split(',')).map(i => i.trim() ? `<li>${i.trim()}</li>` : '').join('')}
-                        </ul>
-
-                        <h3>MODO DE PREPARO</h3>
-                        <ul>
-                            ${(Array.isArray(r.prep) ? r.prep : (r.prep || '').split(/[\n.]/)).map(p => p.trim() ? `<li>${p.trim()}</li>` : '').join('')}
-                        </ul>
-                    </div>
-                    
-                    <div class="foto-container">
-                        <img src="${r.img || ''}" style="transform: scale(${r.zoom || 1}); transform-origin: center;" onerror="this.src='https://placehold.co/300'">
-                    </div>
-                </div>
+            <div class="print-container">
+                <div class="foto-print"><img src="${r.img || ''}"></div>
+                <h1>${r.nome}</h1>
+                <p><strong>COPO:</strong> ${r.copo || '-'} | <strong>CATEGORIA:</strong> ${r.cat || '-'}</p>
+                <p><strong>GUARNIÇÃO:</strong> ${r.guar || '-'}</p>
+                <h3>INGREDIENTES</h3>
+                <ul>${(Array.isArray(r.ings) ? r.ings : []).map(i => `<li>${i}</li>`).join('')}</ul>
+                <h3>MODO DE PREPARO</h3>
+                <ul>${(Array.isArray(r.prep) ? r.prep : []).map(p => `<li>${p}</li>`).join('')}</ul>
             </div>
             <script>
-                window.onload = function() { 
-                    setTimeout(() => { 
-                        window.print(); 
-                        window.close(); 
-                    }, 500); 
-                }
+                window.onload = () => { setTimeout(() => { window.print(); window.close(); }, 700); };
             <\/script>
         </body>
         </html>
