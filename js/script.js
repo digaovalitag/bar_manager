@@ -1,4 +1,4 @@
-const VERSION = '33.0';
+const VERSION = '34.0';
 const URL_SB = "https://tbiorgavxhsjqxxykrfq.supabase.co"; 
 const KEY_SB = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiaW9yZ2F2eGhzanF4eHlrcmZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzMjM4NDksImV4cCI6MjA4MTg5OTg0OX0.n-_1lguGMe0F7GxLj1fT5Y3jXllIyS-5Ehs4pm99lXg";
 
@@ -273,6 +273,52 @@ function imprimirFicha(id) {
     janela.document.close();
 }
 
+function imprimirTodas() {
+    if (dadosLocais.length === 0) return alert("Nenhuma receita para imprimir.");
+    const janela = window.open('', '_blank');
+    
+    // Gera o conteúdo de todas as fichas
+    const conteudoFichas = dadosLocais.map(r => `
+        <div class="print-card">
+            <h1>${r.nome}</h1>
+            <div class="meta">${r.cat} | COPO: ${r.copo} | GUARNIÇÃO: ${r.guar || '-'}</div>
+            <div class="foto-print"><img src="${r.img || ''}" style="transform: scale(${r.zoom || 1});"></div>
+            <div class="section">
+                <h3>INGREDIENTES</h3>
+                <ul>${(Array.isArray(r.ings) ? r.ings : []).map(i => `<li>${i}</li>`).join('')}</ul>
+                <h3>MODO DE PREPARO</h3>
+                <ul>${(Array.isArray(r.prep) ? r.prep : []).map(p => `<li>${p}</li>`).join('')}</ul>
+            </div>
+        </div>
+    `).join('');
+
+    janela.document.write(`
+        <html>
+        <head>
+            <style>
+                @page { size: A4 portrait; margin: 1.5cm; }
+                body { font-family: sans-serif; text-align: center; color: #000; margin: 0; }
+                .print-card { width: 100%; page-break-after: always; min-height: 95vh; }
+                h1 { font-size: 32pt; color: #2489FF; margin: 0; text-transform: uppercase; font-weight: 800; }
+                .meta { font-size: 16pt; margin: 10px 0 20px 0; border-bottom: 2px solid #2489FF; padding-bottom: 10px; }
+                .foto-print { width: 300px; height: 300px; margin: 0 auto 20px auto; border-radius: 15px; overflow: hidden; border: 1px solid #ddd; }
+                .foto-print img { width: 100%; height: 100%; object-fit: cover; }
+                .section { text-align: left; }
+                h3 { font-size: 22pt; border-left: 10px solid #2489FF; padding-left: 15px; margin: 25px 0 10px 0; }
+                ul { list-style-type: disc; padding-left: 40px; }
+                li { font-size: 18pt; margin-bottom: 6px; line-height: 1.3; }
+                * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            </style>
+        </head>
+        <body>
+            ${conteudoFichas}
+            <script>window.onload = () => { setTimeout(() => { window.print(); window.close(); }, 1500); };<\/script>
+        </body>
+        </html>
+    `);
+    janela.document.close();
+}
+
 function editarReceita(id) {
     // 1. Busca de Dados
     const r = dadosLocais.find(item => String(item.id) === String(id));
@@ -523,6 +569,7 @@ window.salvarReceitaCompleta = salvarReceitaCompleta;
 window.mudarAba = mudarAba;
 window.editarReceita = editarReceita;
 window.imprimirFicha = imprimirFicha;
+window.imprimirTodas = imprimirTodas;
 window.excluirReceita = excluirReceita;
 window.filtrar = filtrar;
 window.ajustarZoom = ajustarZoom;

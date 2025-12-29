@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Bar Manager Pro v32.0</title>
+    <title>Bar Manager Pro v34.0</title>
     <link rel="stylesheet" href="../css/style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/script.js" type="module"></script>
@@ -19,7 +19,7 @@
         <button onclick="mudarAba('admin')">⚙️ Gestão Insumos</button>
         <button onclick="abrirEditor()">➕ Novo Drink</button>
         <hr>
-        <button onclick="window.print()" style="background: #27ae60; color: white;">🖨️ Imprimir Seleção</button>
+        <button onclick="imprimirTodas()" style="background: #27ae60; color: white;">🖨️ Imprimir Seleção</button>
         <button onclick="document.getElementById('fileIn').click()" style="background: #444; color: white;">📂 Somar JSON</button>
         <input type="file" id="fileIn" style="display:none" onchange="importarDados(event)">
     </nav>
