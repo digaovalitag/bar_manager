@@ -1,4 +1,4 @@
-const VERSION = '32.0';
+const VERSION = '33.0';
 const URL_SB = "https://tbiorgavxhsjqxxykrfq.supabase.co"; 
 const KEY_SB = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiaW9yZ2F2eGhzanF4eHlrcmZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzMjM4NDksImV4cCI6MjA4MTg5OTg0OX0.n-_1lguGMe0F7GxLj1fT5Y3jXllIyS-5Ehs4pm99lXg";
 
@@ -243,40 +243,58 @@ function imprimirFicha(id) {
         <html>
         <head>
             <style>
-                @page { size: A4; margin: 1.5cm; }
+                @page { size: A4 portrait; margin: 1.0cm; }
                 body { font-family: sans-serif; margin: 0; padding: 0; color: #000; }
-                .print-container { width: 100%; position: relative; }
+                .print-container { width: 100%; max-width: 800px; margin: 0 auto; text-align: center; }
+                
+                /* Título Grande */
+                h1 { font-size: 32pt; color: #2489FF; margin: 0 0 10px 0; text-transform: uppercase; font-weight: 800; }
+                
+                /* Descrição Centralizada */
+                p.desc { font-size: 14pt; color: #444; margin-bottom: 15px; }
+
+                /* Foto Centralizada 300x300 */
                 .foto-print { 
-                    width: 220px !important; 
-                    height: 220px !important; 
-                    float: right; 
-                    margin: 0 0 15px 15px; 
-                    border-radius: 10px; 
+                    width: 300px !important; 
+                    height: 300px !important; 
+                    margin: 10px auto 25px auto; 
+                    border-radius: 16px; 
                     overflow: hidden; 
                     border: 1px solid #ddd;
+                    display: block;
+                    aspect-ratio: 1/1;
                 }
                 .foto-print img { width: 100%; height: 100%; object-fit: cover; transform: scale(${r.zoom || 1}); }
-                h1 { font-size: 26pt; color: #2489FF; margin: 0 0 10px 0; text-transform: uppercase; }
-                h3 { font-size: 16pt; border-bottom: 2px solid #2489FF; margin: 15px 0 8px 0; padding-bottom: 3px; }
-                ul { list-style-type: disc; padding-left: 20px; margin: 5px 0; }
-                li { font-size: 14pt; margin-bottom: 3px; line-height: 1.2; }
-                p { font-size: 12pt; margin: 3px 0; }
+                
+                /* Conteúdo Alinhado à Esquerda para Leitura */
+                .content-left { text-align: left; }
+                h3 { font-size: 20pt; border-bottom: 3px solid #2489FF; margin: 20px 0 10px 0; padding-bottom: 5px; color: #333; }
+                ul { list-style-type: disc; padding-left: 30px; margin: 10px 0; }
+                li { font-size: 18pt; margin-bottom: 8px; line-height: 1.3; }
+                
                 * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             </style>
         </head>
         <body>
             <div class="print-container">
-                <div class="foto-print"><img src="${r.img || ''}"></div>
                 <h1>${r.nome}</h1>
-                <p><strong>COPO:</strong> ${r.copo || '-'} | <strong>CATEGORIA:</strong> ${r.cat || '-'}</p>
-                <p><strong>GUARNIÇÃO:</strong> ${r.guar || '-'}</p>
-                <h3>INGREDIENTES</h3>
-                <ul>${(Array.isArray(r.ings) ? r.ings : []).map(i => `<li>${i}</li>`).join('')}</ul>
-                <h3>MODO DE PREPARO</h3>
-                <ul>${(Array.isArray(r.prep) ? r.prep : []).map(p => `<li>${p}</li>`).join('')}</ul>
+                <p class="desc">
+                    <strong>COPO:</strong> ${r.copo || '-'} | 
+                    <strong>CATEGORIA:</strong> ${r.cat || '-'} | 
+                    <strong>GUARNIÇÃO:</strong> ${r.guar || '-'}
+                </p>
+                
+                <div class="foto-print"><img src="${r.img || ''}"></div>
+                
+                <div class="content-left">
+                    <h3>INGREDIENTES</h3>
+                    <ul>${(Array.isArray(r.ings) ? r.ings : []).map(i => `<li>${i}</li>`).join('')}</ul>
+                    <h3>MODO DE PREPARO</h3>
+                    <ul>${(Array.isArray(r.prep) ? r.prep : []).map(p => `<li>${p}</li>`).join('')}</ul>
+                </div>
             </div>
             <script>
-                window.onload = () => { setTimeout(() => { window.print(); window.close(); }, 700); };
+                window.onload = () => { setTimeout(() => { window.print(); window.close(); }, 800); };
             <\/script>
         </body>
         </html>
