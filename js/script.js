@@ -1,4 +1,4 @@
-const VERSION = '34.0';
+const VERSION = '34.1';
 const URL_SB = "https://tbiorgavxhsjqxxykrfq.supabase.co"; 
 const KEY_SB = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiaW9yZ2F2eGhzanF4eHlrcmZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzMjM4NDksImV4cCI6MjA4MTg5OTg0OX0.n-_1lguGMe0F7GxLj1fT5Y3jXllIyS-5Ehs4pm99lXg";
 
@@ -276,21 +276,26 @@ function imprimirFicha(id) {
 function imprimirTodas() {
     if (dadosLocais.length === 0) return alert("Nenhuma receita para imprimir.");
     const janela = window.open('', '_blank');
+    if (!janela) return alert("Por favor, permita popups para imprimir.");
     
     // Gera o conteúdo de todas as fichas
-    const conteudoFichas = dadosLocais.map(r => `
+    const conteudoFichas = dadosLocais.map(r => {
+        const ings = Array.isArray(r.ings) ? r.ings : (r.ings || '').split(',');
+        const prep = Array.isArray(r.prep) ? r.prep : (r.prep || '').split(/[\n.]/);
+
+        return `
         <div class="print-card">
             <h1>${r.nome}</h1>
             <div class="meta">${r.cat} | COPO: ${r.copo} | GUARNIÇÃO: ${r.guar || '-'}</div>
             <div class="foto-print"><img src="${r.img || ''}" style="transform: scale(${r.zoom || 1});"></div>
             <div class="section">
                 <h3>INGREDIENTES</h3>
-                <ul>${(Array.isArray(r.ings) ? r.ings : []).map(i => `<li>${i}</li>`).join('')}</ul>
+                <ul>${ings.map(i => i.trim() ? `<li>${i.trim()}</li>` : '').join('')}</ul>
                 <h3>MODO DE PREPARO</h3>
-                <ul>${(Array.isArray(r.prep) ? r.prep : []).map(p => `<li>${p}</li>`).join('')}</ul>
+                <ul>${prep.map(p => p.trim() ? `<li>${p.trim()}</li>` : '').join('')}</ul>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 
     janela.document.write(`
         <html>
