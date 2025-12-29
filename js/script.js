@@ -243,59 +243,30 @@ function imprimirFicha(id) {
         <html>
         <head>
             <style>
-                @page { size: A4 portrait; margin: 1.0cm; }
-                body { font-family: sans-serif; margin: 0; padding: 0; color: #000; }
-                .print-container { width: 100%; max-width: 800px; margin: 0 auto; text-align: center; }
-                
-                /* Título Grande */
-                h1 { font-size: 32pt; color: #2489FF; margin: 0 0 10px 0; text-transform: uppercase; font-weight: 800; }
-                
-                /* Descrição Centralizada */
-                p.desc { font-size: 14pt; color: #444; margin-bottom: 15px; }
-
-                /* Foto Centralizada 300x300 */
-                .foto-print { 
-                    width: 300px !important; 
-                    height: 300px !important; 
-                    margin: 10px auto 25px auto; 
-                    border-radius: 16px; 
-                    overflow: hidden; 
-                    border: 1px solid #ddd;
-                    display: block;
-                    aspect-ratio: 1/1;
-                }
+                @page { size: A4 portrait; margin: 1.5cm; }
+                body { font-family: sans-serif; text-align: center; color: #000; margin: 0; }
+                h1 { font-size: 32pt; color: #2489FF; margin: 0; text-transform: uppercase; }
+                .meta { font-size: 16pt; margin: 10px 0 20px 0; border-bottom: 2px solid #2489FF; padding-bottom: 10px; }
+                .foto-print { width: 300px; height: 300px; margin: 0 auto 20px auto; border-radius: 15px; overflow: hidden; border: 1px solid #ddd; }
                 .foto-print img { width: 100%; height: 100%; object-fit: cover; transform: scale(${r.zoom || 1}); }
-                
-                /* Conteúdo Alinhado à Esquerda para Leitura */
-                .content-left { text-align: left; }
-                h3 { font-size: 20pt; border-bottom: 3px solid #2489FF; margin: 20px 0 10px 0; padding-bottom: 5px; color: #333; }
-                ul { list-style-type: disc; padding-left: 30px; margin: 10px 0; }
-                li { font-size: 18pt; margin-bottom: 8px; line-height: 1.3; }
-                
+                .section { text-align: left; }
+                h3 { font-size: 22pt; border-left: 10px solid #2489FF; padding-left: 15px; margin: 25px 0 10px 0; }
+                ul { list-style-type: disc; padding-left: 40px; }
+                li { font-size: 18pt; margin-bottom: 6px; line-height: 1.3; }
                 * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             </style>
         </head>
         <body>
-            <div class="print-container">
-                <h1>${r.nome}</h1>
-                <p class="desc">
-                    <strong>COPO:</strong> ${r.copo || '-'} | 
-                    <strong>CATEGORIA:</strong> ${r.cat || '-'} | 
-                    <strong>GUARNIÇÃO:</strong> ${r.guar || '-'}
-                </p>
-                
-                <div class="foto-print"><img src="${r.img || ''}"></div>
-                
-                <div class="content-left">
-                    <h3>INGREDIENTES</h3>
-                    <ul>${(Array.isArray(r.ings) ? r.ings : []).map(i => `<li>${i}</li>`).join('')}</ul>
-                    <h3>MODO DE PREPARO</h3>
-                    <ul>${(Array.isArray(r.prep) ? r.prep : []).map(p => `<li>${p}</li>`).join('')}</ul>
-                </div>
+            <h1>${r.nome}</h1>
+            <div class="meta">${r.cat} | COPO: ${r.copo} | GUARNIÇÃO: ${r.guar || '-'}</div>
+            <div class="foto-print"><img src="${r.img || ''}"></div>
+            <div class="section">
+                <h3>INGREDIENTES</h3>
+                <ul>${(Array.isArray(r.ings) ? r.ings : []).map(i => `<li>${i}</li>`).join('')}</ul>
+                <h3>MODO DE PREPARO</h3>
+                <ul>${(Array.isArray(r.prep) ? r.prep : []).map(p => `<li>${p}</li>`).join('')}</ul>
             </div>
-            <script>
-                window.onload = () => { setTimeout(() => { window.print(); window.close(); }, 800); };
-            <\/script>
+            <script>window.onload = () => { setTimeout(() => { window.print(); window.close(); }, 800); };</script>
         </body>
         </html>
     `);

@@ -57,7 +57,7 @@ main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); max-width: 
 .ficha-info p { font-size: 16px; margin: 5px 0; color: #444; }
 
 /* Foto Quadrada Grande */
-.foto-container, .foto-preview-container { 
+.foto-preview-container { 
     width: 300px !important; 
     height: 300px !important; 
     overflow: hidden; 
@@ -66,6 +66,12 @@ main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); max-width: 
     flex-shrink: 0;
     aspect-ratio: 1 / 1 !important;
     margin: 0 auto;
+}
+.foto-container { 
+    width: 300px !important; height: 300px !important; 
+    margin: 20px auto !important; display: block !important;
+    border-radius: 16px; overflow: hidden; 
+    aspect-ratio: 1/1 !important; border: 1px solid #ddd;
 }
 .foto-container img { 
     width: 100% !important; 
@@ -209,13 +215,7 @@ main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); max-width: 
 
     .drink-card {
         display: flex;
-        flex-direction: column-reverse;
         gap: 20px;
-    }
-
-    .foto-container {
-        width: 100% !important;
-        height: 250px !important;
     }
 
     .search-box {
