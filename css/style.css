@@ -84,6 +84,7 @@ main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); max-width: 
 
 @media print {
     @page { size: A4; margin: 10mm; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     .no-print { display: none !important; }
     .btn, .sidebar, #busca, nav { display: none !important; }
     main { margin: 0; width: 100%; padding: 0; }
